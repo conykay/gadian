@@ -20,8 +20,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         margin: _currentIndex == index
             ? const EdgeInsets.symmetric(horizontal: 2)
             : EdgeInsets.zero,
-        height: 5,
-        width: _currentIndex == index ? 15 : 5,
+        height: 8,
+        width: _currentIndex == index ? 20 : 8,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: _currentIndex == index
@@ -63,10 +63,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           children: [
                             Text(
                               current.title,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 30,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.red,
+                                color: Colors.red.shade700,
                               ),
                             ),
                             const SizedBox(
@@ -109,11 +109,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   TextButton(
-                                    onPressed: () {},
+                                    onPressed: () => _controller.animateToPage(
+                                      kOnboardingInfo.length - 1,
+                                      duration:
+                                          const Duration(milliseconds: 1000),
+                                      curve: Curves.decelerate,
+                                    ),
                                     child: const Text('SKIP'),
                                   ),
                                   IconButton(
-                                    onPressed: () {},
+                                    onPressed: () => _controller.nextPage(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      curve: Curves.easeIn,
+                                    ),
                                     icon: const Icon(Icons.navigate_next),
                                   )
                                 ],
