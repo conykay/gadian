@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gadian/methods/onboarding_info.dart';
+import 'package:gadian/screens/registration_screen.dart';
 
 import '../constants.dart';
 
@@ -63,11 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           children: [
                             Text(
                               current.title,
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red.shade700,
-                              ),
+                              style: kHeadlineText,
                             ),
                             const SizedBox(
                               height: 20,
@@ -84,50 +81,35 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ],
                         ),
                       ),
-                      Hero(
-                        tag: 'buttons',
-                        child: index + 1 == kOnboardingInfo.length
-                            ? ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  textStyle: TextStyle(
-                                    fontSize: 20,
-                                    color: Colors.red.shade50,
+                      index + 1 == kOnboardingInfo.length
+                          ? ElevatedButton(
+                              onPressed: () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          RegistrationScreen())),
+                              child: const Text('Get Started'),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton(
+                                  onPressed: () => _controller.animateToPage(
+                                    kOnboardingInfo.length - 1,
+                                    duration:
+                                        const Duration(milliseconds: 1000),
+                                    curve: Curves.decelerate,
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 50,
-                                    vertical: 10,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
+                                  child: const Text('SKIP'),
                                 ),
-                                onPressed: () {},
-                                child: const Text('Get Started'),
-                              )
-                            : Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  TextButton(
-                                    onPressed: () => _controller.animateToPage(
-                                      kOnboardingInfo.length - 1,
-                                      duration:
-                                          const Duration(milliseconds: 1000),
-                                      curve: Curves.decelerate,
-                                    ),
-                                    child: const Text('SKIP'),
+                                IconButton(
+                                  onPressed: () => _controller.nextPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeIn,
                                   ),
-                                  IconButton(
-                                    onPressed: () => _controller.nextPage(
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      curve: Curves.easeIn,
-                                    ),
-                                    icon: const Icon(Icons.navigate_next),
-                                  )
-                                ],
-                              ),
-                      )
+                                  icon: const Icon(Icons.navigate_next),
+                                )
+                              ],
+                            )
                     ],
                   ),
                 );
