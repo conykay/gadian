@@ -18,7 +18,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       body: SafeArea(
         child: PageView(
           controller: _regController,
-          physics: const NeverScrollableScrollPhysics(),
           children: [
             SignUpPage(pageController: _regController),
             LoginPage(pageController: _regController),
