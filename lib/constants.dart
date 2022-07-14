@@ -13,15 +13,24 @@ ThemeData kThemedata(BuildContext context) => ThemeData(
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      filled: true,
+      fillColor: Colors.grey.withOpacity(0.1),
+      labelStyle: TextStyle(color: Colors.grey),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Colors.red.shade200,
+          width: 2.0,
+        ),
+      ),
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: Colors.red.shade200),
+        borderSide: BorderSide.none,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         onSurface: Colors.red,
         textStyle: TextStyle(
-          fontSize: 20,
+          fontSize: 18,
         ),
       ),
     ),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../constants.dart';
-
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);
   final PageController pageController;
@@ -10,44 +8,124 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _showPassword = true;
+
+  void _toggle() {
+    setState(() {
+      _showPassword = !_showPassword;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          'Login',
-          style: kHeadlineText,
-        ),
-        Form(
-          child: Column(
+        Container(
+          decoration: BoxDecoration(color: Colors.redAccent.withOpacity(0.05)),
+          child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(),
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                      color: Colors.red.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(
+                    Icons.key,
+                    size: 50,
+                    color: Colors.redAccent,
+                  ),
+                ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: TextFormField(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome back',
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  Text(
+                    'Sign in to use your account.',
+                    style: Theme.of(context).textTheme.subtitle1,
+                  )
+                ],
               ),
             ],
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () {},
-              child: Text('Login'),
-            ),
-            TextButton(
-              onPressed: () => widget.pageController.previousPage(
-                duration: Duration(milliseconds: 400),
-                curve: Curves.easeIn,
+        Divider(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+          child: Form(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      validator: (value) => value == null || value.isEmpty
+                          ? "This field cannot be empty."
+                          : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextFormField(
+                      obscureText: _showPassword,
+                      validator: (value) => value == null || value.isEmpty
+                          ? "This field cannot be empty."
+                          : null,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: _toggle,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              child: Text('Sign up'),
             ),
-          ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: () {},
+                child: Text('Login'),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Dont have an account?',
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  TextButton(
+                    onPressed: () => widget.pageController.previousPage(
+                        duration: Duration(milliseconds: 400),
+                        curve: Curves.easeIn),
+                    child: Text(
+                      'Sign up',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         TextButton(
           onPressed: () {},
