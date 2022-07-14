@@ -15,7 +15,6 @@ ThemeData kThemedata(BuildContext context) => ThemeData(
       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       border: OutlineInputBorder(
         borderSide: BorderSide(color: Colors.red.shade200),
-        borderRadius: BorderRadius.circular(50),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
@@ -28,6 +27,7 @@ ThemeData kThemedata(BuildContext context) => ThemeData(
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        minimumSize: Size.fromHeight(50),
         textStyle: TextStyle(
           fontSize: 20,
           color: Colors.red.shade50,
@@ -37,7 +37,7 @@ ThemeData kThemedata(BuildContext context) => ThemeData(
           vertical: 10,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     ));
