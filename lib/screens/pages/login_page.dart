@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gadian/constants.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);
@@ -9,7 +10,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _showPassword = true;
-
+  final _formKey = GlobalKey<FormState>();
   void _toggle() {
     setState(() {
       _showPassword = !_showPassword;
@@ -20,90 +21,28 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          decoration: BoxDecoration(color: Colors.redAccent.withOpacity(0.05)),
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Icon(
-                    Icons.key,
-                    size: 50,
-                    color: Colors.redAccent,
-                  ),
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Welcome back',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  Text(
-                    'Sign in to use your account.',
-                    style: Theme.of(context).textTheme.subtitle1,
-                  )
-                ],
-              ),
-            ],
-          ),
+        kBuildPageTitle(
+          context,
+          'Welcome back!',
+          'Access your account to continue.',
+          Icons.key,
         ),
-        Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
-          child: Form(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextFormField(
-                      keyboardType: TextInputType.emailAddress,
-                      validator: (value) => value == null || value.isEmpty
-                          ? "This field cannot be empty."
-                          : null,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextFormField(
-                      obscureText: _showPassword,
-                      validator: (value) => value == null || value.isEmpty
-                          ? "This field cannot be empty."
-                          : null,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _showPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: _toggle,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        const Divider(),
+        _buildLoginForm(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
           child: Column(
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("The form is valid "),
+                      ),
+                    );
+                  }
+                },
                 child: Text('Login'),
               ),
               Row(
@@ -132,6 +71,56 @@ class _LoginPageState extends State<LoginPage> {
           child: Text('Forgot password ?'),
         )
       ],
+    );
+  }
+
+  Padding _buildLoginForm() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+      child: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "This field cannot be empty";
+                    } else if (kIsValidEmail(value)) {
+                      return "Please enter a valid email address";
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextFormField(
+                  obscureText: _showPassword,
+                  validator: (value) => value == null || value.isEmpty
+                      ? "This field cannot be empty."
+                      : null,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showPassword ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: _toggle,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -50,6 +50,7 @@ ThemeData kThemedata(BuildContext context) => ThemeData(
         ),
       ),
     ));
+
 //Onboarding info
 final List<OnboardingInfo> kOnboardingInfo = [
   OnboardingInfo(
@@ -68,10 +69,56 @@ final List<OnboardingInfo> kOnboardingInfo = [
     'images/alert.svg',
   ),
 ];
-// text styles
 
+// text styles
 TextStyle kHeadlineText = TextStyle(
   fontSize: 30,
   fontWeight: FontWeight.bold,
   color: Colors.red.shade500,
 );
+
+//email  validation regex.
+bool kIsValidEmail(value) {
+  String pattern =
+      r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+  return !(RegExp(pattern).hasMatch(value));
+}
+
+// Registration Page Title Widget
+Container kBuildPageTitle(
+    BuildContext context, String title, String info, IconData icon) {
+  return Container(
+    decoration: BoxDecoration(color: Colors.redAccent.withOpacity(0.05)),
+    child: Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+                color: Colors.red.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(10)),
+            child: Icon(
+              icon,
+              size: 50,
+              color: Colors.redAccent,
+            ),
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            Text(
+              info,
+              style: Theme.of(context).textTheme.subtitle1,
+            )
+          ],
+        ),
+      ],
+    ),
+  );
+}
