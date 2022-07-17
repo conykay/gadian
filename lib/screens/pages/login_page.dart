@@ -43,12 +43,12 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   }
                 },
-                child: Text('Login'),
+                child: const Text('Login'),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'Dont have an account?',
                     style: TextStyle(fontSize: 15),
                   ),
@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () => widget.pageController.previousPage(
                         duration: Duration(milliseconds: 400),
                         curve: Curves.easeIn),
-                    child: Text(
+                    child: const Text(
                       'Sign up',
                       style: TextStyle(fontSize: 18),
                     ),

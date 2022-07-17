@@ -41,20 +41,20 @@ class _SignUpPageState extends State<SignUpPage> {
                       );
                     }
                   },
-                  child: Text('Sign up'),
+                  child: const Text('Sign up'),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Already have an account ?',
                       style: TextStyle(fontSize: 15),
                     ),
                     TextButton(
                       onPressed: () => widget.pageController.nextPage(
-                          duration: Duration(milliseconds: 400),
+                          duration: const Duration(milliseconds: 400),
                           curve: Curves.easeIn),
-                      child: Text(
+                      child: const Text(
                         'Login',
                         style: TextStyle(fontSize: 18),
                       ),

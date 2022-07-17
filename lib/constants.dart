@@ -3,7 +3,7 @@ import 'package:gadian/methods/onboarding_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // Apllication theme
-ThemeData kThemedata(BuildContext context) => ThemeData(
+ThemeData kThemeData(BuildContext context) => ThemeData(
     textTheme: GoogleFonts.muktaTextTheme(),
     primarySwatch: Colors.red,
     colorScheme: Theme.of(context).colorScheme.copyWith(
@@ -15,28 +15,28 @@ ThemeData kThemedata(BuildContext context) => ThemeData(
       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       filled: true,
       fillColor: Colors.grey.withOpacity(0.1),
-      labelStyle: TextStyle(color: Colors.grey),
+      labelStyle: const TextStyle(color: Colors.grey),
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(
           color: Colors.red.shade200,
           width: 2.0,
         ),
       ),
-      border: OutlineInputBorder(
+      border: const OutlineInputBorder(
         borderSide: BorderSide.none,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         onSurface: Colors.red,
-        textStyle: TextStyle(
+        textStyle: const TextStyle(
           fontSize: 18,
         ),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        minimumSize: Size.fromHeight(50),
+        minimumSize: const Size.fromHeight(50),
         textStyle: TextStyle(
           fontSize: 20,
           color: Colors.red.shade50,
@@ -94,7 +94,7 @@ Container kBuildPageTitle(
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
                 color: Colors.red.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10)),
