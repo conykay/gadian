@@ -77,8 +77,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     padding: const EdgeInsets.all(10.0),
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) => value == null || value.isEmpty
-                          ? "This field cannot be empty."
+                      validator: (value) => value == null ||
+                              value.isEmpty ||
+                              RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                  .hasMatch(value)
+                          ? "Invalid email address."
                           : null,
                       decoration: const InputDecoration(
                         labelText: 'Email',
