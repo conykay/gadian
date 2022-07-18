@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gadian/methods/onboarding_info.dart';
 import 'package:gadian/screens/registration_screen.dart';
+import 'package:gadian/services/shared_prefrences.dart';
 
 import '../constants.dart';
 
@@ -82,12 +83,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                       index + 1 == kOnboardingInfo.length
-                          ? ElevatedButton(
-                              onPressed: () => Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          RegistrationScreen())),
-                              child: const Text('Get Started'),
+                          ? Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  await SharedPrefs()
+                                      .setSharedPrefs('new', false);
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const RegistrationScreen()),
+                                  );
+                                },
+                                child: const Text('Get Started'),
+                              ),
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
