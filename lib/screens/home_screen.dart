@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gadian/methods/providers/authentication_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -10,7 +12,15 @@ class HomeScreen extends StatelessWidget {
         title: Text('WELCOME USER'),
       ),
       body: Center(
-        child: Text('You are now in buddy dont die.'),
+        child: Column(
+          children: [
+            Text('You are now in buddy dont die.'),
+            ElevatedButton(
+              onPressed: () => context.read<Authprovider>().logout(),
+              child: Text('Logout'),
+            )
+          ],
+        ),
       ),
     );
   }

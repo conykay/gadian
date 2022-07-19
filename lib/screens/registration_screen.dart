@@ -13,6 +13,7 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final PageController _regController = PageController();
   var _currentIndex = 0;
+  final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -27,6 +28,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         }
       },
       child: Scaffold(
+        key: _scaffoldKey,
         body: SafeArea(
           child: PageView(
             onPageChanged: (index) => setState(() {

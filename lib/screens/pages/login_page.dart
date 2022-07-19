@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gadian/constants.dart';
+import 'package:provider/provider.dart';
+
+import '../../methods/providers/authentication_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);
@@ -17,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  var userdata = {};
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,11 +41,14 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("The form is valid "),
-                      ),
-                    );
+                    print(userdata);
+                    try {
+                      Provider.of<Authprovider>(context, listen: false).login(
+                          email: userdata['email'],
+                          password: userdata['password']);
+                    } on FirebaseAuthException catch (e) {
+                      print(e);
+                    }
                   }
                 },
                 child: const Text('Login'),
@@ -86,6 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   keyboardType: TextInputType.emailAddress,
+                  onChanged: (value) =>
+                      userdata = {...userdata, 'email': value},
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "This field cannot be empty";
@@ -103,6 +113,8 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   obscureText: _showPassword,
+                  onChanged: (value) =>
+                      userdata = {...userdata, 'password': value},
                   validator: (value) => value == null || value.isEmpty
                       ? "This field cannot be empty."
                       : null,

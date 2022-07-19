@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gadian/constants.dart';
+import 'package:gadian/methods/providers/authentication_provider.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, required this.pageController}) : super(key: key);
@@ -11,6 +14,7 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
+  var userdata = {};
 
   void _toggle() {
     setState(() {
@@ -34,11 +38,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("The form is valid "),
-                        ),
-                      );
+                      print(userdata);
+                      try {
+                        context.read<Authprovider>().createAccount(
+                            email: userdata['email'],
+                            password: userdata['password']);
+                      } on FirebaseAuthException catch (e) {
+                        print(e);
+                      }
                     }
                   },
                   child: const Text('Sign up'),
@@ -91,6 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 keyboardType: TextInputType.emailAddress,
+                onChanged: (value) => userdata = {...userdata, 'email': value},
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "This field cannot be empty";
@@ -120,6 +128,8 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 obscureText: _showPassword,
+                onChanged: (value) =>
+                    userdata = {...userdata, 'password': value},
                 validator: (value) => value == null || value.isEmpty
                     ? "This field cannot be empty."
                     : null,
