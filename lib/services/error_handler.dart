@@ -38,10 +38,11 @@ class AuthExceptionHandler {
         errorMessage = 'There was a problem with your email address.';
         break;
       case AuthStatus.wrongPassword:
-        errorMessage = 'Your email or password is wrong';
+        errorMessage = 'Your email or password is wrong.';
         break;
       case AuthStatus.emailAlreadyExists:
-        errorMessage = 'The email address is already in use by another account';
+        errorMessage =
+            'The email address is already in use by another account.';
         break;
       case AuthStatus.userNotFound:
         errorMessage = 'We cannot find a user with that email.';

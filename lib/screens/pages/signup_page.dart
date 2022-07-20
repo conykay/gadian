@@ -30,7 +30,11 @@ class _SignUpPageState extends State<SignUpPage> {
       child: Column(
         children: [
           kBuildPageTitle(
-              context, "Sign up", "Create account to continue", Icons.person),
+            context,
+            "Sign up",
+            "Create account to continue",
+            Icons.person,
+          ),
           const Divider(),
           _buildSignUpForm(),
           Padding(

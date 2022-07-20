@@ -51,6 +51,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   }
 
   Future<void> _handleForgotPassword(BuildContext context) async {
+    var scaffold = ScaffoldMessenger.of(context);
     if (_formKey.currentState!.validate()) {
       setState(() {
         _loading = true;
@@ -62,7 +63,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         setState(() {
           _loading = false;
         });
-        ScaffoldMessenger.of(context).showMaterialBanner(infoMaterialBanner(
+        scaffold.showMaterialBanner(infoMaterialBanner(
           content: 'Email sent successfully. Check your inbox.',
           icon: Icons.email_outlined,
           color: Colors.green,

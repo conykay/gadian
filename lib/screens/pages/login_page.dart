@@ -1,10 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gadian/constants.dart';
+import 'package:gadian/methods/providers/authentication_provider.dart';
+import 'package:gadian/services/error_handler.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/infoMaterialBanner.dart';
 import '../../components/registrationPageTitle.dart';
-import '../../methods/providers/authentication_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);
@@ -16,6 +18,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
+  bool _loading = false;
+  AuthStatus? _status;
   void _toggle() {
     setState(() {
       _showPassword = !_showPassword;
@@ -40,30 +44,24 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             children: [
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    print(userdata);
-                    try {
-                      Provider.of<Authprovider>(context, listen: false).login(
-                          email: userdata['email'],
-                          password: userdata['password']);
-                    } on FirebaseAuthException catch (e) {
-                      print(e);
-                    }
-                  }
+                onPressed: () async {
+                  await _handleLogin(context);
                 },
-                child: const Text('Login'),
+                child: _loading
+                    ? CircularProgressIndicator(
+                        color: Colors.white.withOpacity(0.5))
+                    : const Text('Login'),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
-                    'Dont have an account?',
+                    "Don't have an account?",
                     style: TextStyle(fontSize: 15),
                   ),
                   TextButton(
                     onPressed: () => widget.pageController.previousPage(
-                        duration: Duration(milliseconds: 400),
+                        duration: const Duration(milliseconds: 400),
                         curve: Curves.easeIn),
                     child: const Text(
                       'Sign up',
@@ -85,6 +83,32 @@ class _LoginPageState extends State<LoginPage> {
         )
       ],
     );
+  }
+
+  Future<void> _handleLogin(BuildContext context) async {
+    var scaffold = ScaffoldMessenger.of(context);
+    if (_formKey.currentState!.validate()) {
+      if (kDebugMode) {
+        print(userdata);
+      }
+      setState(() => _loading = true);
+      await Provider.of<Authprovider>(context, listen: false)
+          .login(email: userdata['email'], password: userdata['password'])
+          .then((value) => _status = value);
+      if (_status != AuthStatus.successful) {
+        setState(() => _loading = false);
+        final error = AuthExceptionHandler.generateErrorMessage(_status);
+        scaffold.showMaterialBanner(
+          infoMaterialBanner(
+            content: error,
+            icon: Icons.highlight_remove_outlined,
+            color: Colors.redAccent,
+            onPressed: () =>
+                ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+          ),
+        );
+      }
+    }
   }
 
   Padding _buildLoginForm() {
