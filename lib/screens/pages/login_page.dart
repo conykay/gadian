@@ -103,8 +103,7 @@ class _LoginPageState extends State<LoginPage> {
             content: error,
             icon: Icons.highlight_remove_outlined,
             color: Colors.redAccent,
-            onPressed: () =>
-                ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+            onPressed: () => scaffold.hideCurrentMaterialBanner(),
           ),
         );
       }

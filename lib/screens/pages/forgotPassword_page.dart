@@ -67,8 +67,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           content: 'Email sent successfully. Check your inbox.',
           icon: Icons.email_outlined,
           color: Colors.green,
-          onPressed: () =>
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+          onPressed: () => scaffold.hideCurrentMaterialBanner(),
         ));
         widget.pageController.previousPage(
             duration: const Duration(milliseconds: 400),
@@ -76,13 +75,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       } else {
         setState(() => _loading = false);
         final error = AuthExceptionHandler.generateErrorMessage(_status);
-        ScaffoldMessenger.of(context).showMaterialBanner(
+        scaffold.showMaterialBanner(
           infoMaterialBanner(
             content: error,
             icon: Icons.highlight_remove_outlined,
             color: Colors.redAccent,
-            onPressed: () =>
-                ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+            onPressed: () => scaffold.hideCurrentMaterialBanner(),
           ),
         );
       }
