@@ -4,6 +4,8 @@ import 'package:gadian/constants.dart';
 import 'package:gadian/methods/providers/authentication_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/registrationPageTitle.dart';
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, required this.pageController}) : super(key: key);
   final PageController pageController;

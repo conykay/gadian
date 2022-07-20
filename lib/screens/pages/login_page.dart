@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gadian/constants.dart';
 import 'package:provider/provider.dart';
 
+import '../../components/registrationPageTitle.dart';
 import '../../methods/providers/authentication_provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -75,8 +76,12 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         TextButton(
-          onPressed: () {},
-          child: Text('Forgot password ?'),
+          onPressed: () {
+            widget.pageController.nextPage(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut);
+          },
+          child: const Text('Forgot password ?'),
         )
       ],
     );

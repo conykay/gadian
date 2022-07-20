@@ -1,32 +1,49 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../error_handler.dart';
+
 class Authentication {
   final FirebaseAuth firebaseAuth;
   Authentication(this.firebaseAuth);
+  AuthStatus? _status;
 
   //Create account
-  Future<void> createAccount(
+  Future<AuthStatus> createAccount(
       {required String email, required String password}) async {
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
+      _status = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      throw e.message!;
+      _status = AuthExceptionHandler.handleAuthException(e);
     }
+    return _status!;
   }
 
   //Login to existing account
-  Future<void> login({required String email, required String password}) async {
+  Future<AuthStatus> login({
+    required String email,
+    required String password,
+  }) async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
+      _status = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        throw Exception('We cannot find any account with those credentials');
-      } else if (e.code == 'wrong-password') {
-        throw Exception('Incorrect password');
-      }
+      _status = AuthExceptionHandler.handleAuthException(e);
     }
+    return _status!;
+  }
+
+  //Reset password
+  Future<AuthStatus> resetPassword({required String email}) async {
+    try {
+      await firebaseAuth.sendPasswordResetEmail(email: email);
+      _status = AuthStatus.successful;
+    } on FirebaseAuthException catch (e) {
+      _status = AuthExceptionHandler.handleAuthException(e);
+    }
+    return _status!;
   }
 
   //Logout

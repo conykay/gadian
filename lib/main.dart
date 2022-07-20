@@ -34,7 +34,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
-  bool isNew = true;
+  bool? isNew;
 
   _checkNewUser() async {
     isNew = await SharedPrefs().getIsFirstTime('new');
@@ -72,7 +72,15 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: kThemeData(context),
           home: !_isLoggedIn
-              ? (isNew ? const OnboardingScreen() : const RegistrationScreen())
+              ? (isNew == null
+                  ? const Scaffold(
+                      body: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : (isNew!
+                      ? const OnboardingScreen()
+                      : const RegistrationScreen()))
               : const HomeScreen(),
         );
       },

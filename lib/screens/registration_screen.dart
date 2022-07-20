@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gadian/screens/pages/forgotPassword_page.dart';
 import 'package:gadian/screens/pages/signup_page.dart';
 
 import 'pages/login_page.dart';
@@ -38,6 +39,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             children: [
               SignUpPage(pageController: _regController),
               LoginPage(pageController: _regController),
+              ForgotPasswordPage(pageController: _regController)
             ],
           ),
         ),
