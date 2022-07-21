@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gadian/components/infoMaterialBanner.dart';
+import 'package:gadian/components/registrationPageTitle.dart';
+import 'package:gadian/constants.dart';
+import 'package:gadian/methods/providers/authentication_provider.dart';
+import 'package:gadian/services/error_handler.dart';
 import 'package:provider/provider.dart';
-
-import '../../components/infoMaterialBanner.dart';
-import '../../components/registrationPageTitle.dart';
-import '../../constants.dart';
-import '../../methods/providers/authentication_provider.dart';
-import '../../services/error_handler.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key? key, required this.pageController})

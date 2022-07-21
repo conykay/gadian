@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gadian/screens/pages/forgotPassword_page.dart';
-import 'package:gadian/screens/pages/signup_page.dart';
 
+import 'pages/forgotPassword_page.dart';
 import 'pages/login_page.dart';
+import 'pages/signup_page.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);

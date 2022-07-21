@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gadian/methods/onboarding_info.dart';
-import 'package:gadian/screens/registration_screen.dart';
+import 'package:gadian/screens/authentication/registration_screen.dart';
 import 'package:gadian/services/shared_prefrences.dart';
 
 import '../constants.dart';

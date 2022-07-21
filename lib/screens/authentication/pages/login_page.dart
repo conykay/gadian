@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gadian/components/infoMaterialBanner.dart';
+import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
 import 'package:gadian/methods/providers/authentication_provider.dart';
 import 'package:gadian/services/error_handler.dart';
 import 'package:provider/provider.dart';
-
-import '../../components/infoMaterialBanner.dart';
-import '../../components/registrationPageTitle.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);

@@ -5,8 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:gadian/constants.dart';
 import 'package:gadian/firebase_options.dart';
 import 'package:gadian/methods/providers/authentication_provider.dart';
+import 'package:gadian/screens/authentication/registration_screen.dart';
 import 'package:gadian/screens/home_screen.dart';
-import 'package:gadian/screens/registration_screen.dart';
 import 'package:gadian/services/shared_prefrences.dart';
 import 'package:provider/provider.dart';
 
