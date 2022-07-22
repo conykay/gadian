@@ -1,9 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
 import 'package:gadian/models/providers/authentication_provider.dart';
 import 'package:provider/provider.dart';
+
+import '../../../services/error_handler.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, required this.pageController}) : super(key: key);
@@ -16,7 +19,9 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
   var userdata = {};
-
+  bool _loading = false;
+  AuthStatus? _authStatus;
+  ExceptionStatus? _exceptionStatus;
   void _toggle() {
     setState(() {
       _showPassword = !_showPassword;
@@ -30,8 +35,8 @@ class _SignUpPageState extends State<SignUpPage> {
         children: [
           kBuildPageTitle(
             context,
-            "Sign up",
-            "Create account to continue",
+            'Sign up',
+            'Create account to continue',
             Icons.person,
           ),
           const Divider(),
@@ -41,19 +46,13 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Column(
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      print(userdata);
-                      try {
-                        context.read<Authprovider>().createAccount(
-                            email: userdata['email'],
-                            password: userdata['password']);
-                      } on FirebaseAuthException catch (e) {
-                        print(e);
-                      }
-                    }
+                  onPressed: () async {
+                    await _handleSignup(context);
                   },
-                  child: const Text('Sign up'),
+                  child: _loading
+                      ? CircularProgressIndicator(
+                          color: Colors.white.withOpacity(0.5))
+                      : const Text('Sign up'),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -81,6 +80,39 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
+  Future<void> _handleSignup(BuildContext context) async {
+    var scaffold = ScaffoldMessenger.of(context);
+    if (_formKey.currentState!.validate()) {
+      if (kDebugMode) {
+        print(userdata);
+      }
+      setState(() => _loading = true);
+      await Provider.of<Authprovider>(context, listen: false)
+          .createAccount(
+              email: userdata['email'], password: userdata['password'])
+          .then((value) => value.runtimeType == AuthStatus
+              ? _authStatus = value
+              : _exceptionStatus = value);
+      if (_authStatus != AuthStatus.successful) {
+        setState(() => _loading = false);
+        String error;
+        if (_exceptionStatus != null) {
+          error = ExceptionHandler.generateErrorMessage(_exceptionStatus);
+        } else {
+          error = AuthExceptionHandler.generateErrorMessage(_authStatus);
+        }
+        scaffold.showMaterialBanner(
+          infoMaterialBanner(
+            content: error,
+            icon: Icons.highlight_remove_outlined,
+            color: Colors.redAccent,
+            onPressed: () => scaffold.hideCurrentMaterialBanner(),
+          ),
+        );
+      }
+    }
+  }
+
   Padding _buildSignUpForm() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
@@ -92,7 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 validator: (value) => value == null || value.isEmpty
-                    ? "This field cannot be empty."
+                    ? 'This field cannot be empty.'
                     : null,
                 decoration: const InputDecoration(
                   labelText: 'Full name',
@@ -106,9 +138,9 @@ class _SignUpPageState extends State<SignUpPage> {
                 onChanged: (value) => userdata = {...userdata, 'email': value},
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "This field cannot be empty";
+                    return 'This field cannot be empty';
                   } else if (kIsValidEmail(value)) {
-                    return "Please enter a valid email address";
+                    return 'Please enter a valid email address';
                   }
                   return null;
                 },
@@ -122,7 +154,7 @@ class _SignUpPageState extends State<SignUpPage> {
               child: TextFormField(
                 keyboardType: TextInputType.phone,
                 validator: (value) => value == null || value.isEmpty
-                    ? "This field cannot be empty."
+                    ? 'This field cannot be empty.'
                     : null,
                 decoration: const InputDecoration(
                   labelText: 'Phone number',
@@ -136,7 +168,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 onChanged: (value) =>
                     userdata = {...userdata, 'password': value},
                 validator: (value) => value == null || value.isEmpty
-                    ? "This field cannot be empty."
+                    ? 'This field cannot be empty.'
                     : null,
                 decoration: InputDecoration(
                   labelText: 'Password',

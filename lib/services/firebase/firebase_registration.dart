@@ -7,10 +7,12 @@ class Authentication {
   final FirebaseAuth firebaseAuth;
   final FirebaseDatabase db = FirebaseDatabase.instance;
   Authentication(this.firebaseAuth);
-  AuthStatus? _status;
+  AuthStatus? _authStatus;
+  ExceptionStatus? _exceptionStatus;
   //Create account
-  Future<AuthStatus> createAccount(
+  Future<dynamic> createAccount(
       {required String email, required String password}) async {
+    bool authException = false;
     try {
       await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password)
@@ -19,16 +21,17 @@ class Authentication {
         final uid = user?.uid;
         final DatabaseReference ref = db.ref('users/$uid');
         try {
-          await ref.set({});
+          await ref.set({'name': '$uid'});
         } on FirebaseException catch (e) {
-          _status = ExceptionHandler.handleException(e);
+          authException = true;
+          _exceptionStatus = ExceptionHandler.handleException(e);
         }
       });
-      _status = AuthStatus.successful;
+      _authStatus = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      _status = AuthExceptionHandler.handleAuthException(e);
+      _authStatus = AuthExceptionHandler.handleAuthException(e);
     }
-    return _status!;
+    return authException ? _exceptionStatus! : _authStatus!;
   }
 
   //Login to existing account
@@ -39,22 +42,22 @@ class Authentication {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      _status = AuthStatus.successful;
+      _authStatus = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      _status = AuthExceptionHandler.handleAuthException(e);
+      _authStatus = AuthExceptionHandler.handleAuthException(e);
     }
-    return _status!;
+    return _authStatus!;
   }
 
   //Reset password
   Future<AuthStatus> resetPassword({required String email}) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
-      _status = AuthStatus.successful;
+      _authStatus = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      _status = AuthExceptionHandler.handleAuthException(e);
+      _authStatus = AuthExceptionHandler.handleAuthException(e);
     }
-    return _status!;
+    return _authStatus!;
   }
 
   //Logout
