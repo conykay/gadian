@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gadian/methods/onboarding_info.dart';
+import 'package:gadian/models/onboarding_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // Apllication theme

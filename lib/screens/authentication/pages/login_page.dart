@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
-import 'package:gadian/methods/providers/authentication_provider.dart';
+import 'package:gadian/models/providers/authentication_provider.dart';
 import 'package:gadian/services/error_handler.dart';
 import 'package:provider/provider.dart';
 

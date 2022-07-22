@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gadian/methods/providers/authentication_provider.dart';
+import 'package:gadian/models/providers/authentication_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
