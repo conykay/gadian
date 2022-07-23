@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:gadian/models/user_model.dart';
 
 import '../error_handler.dart';
 
@@ -10,12 +11,12 @@ class Authentication {
   AuthStatus? _authStatus;
   ExceptionStatus? _exceptionStatus;
   //Create account
-  Future<dynamic> createAccount(
-      {required String email, required String password}) async {
+  Future<dynamic> createAccount({required UserModel userModel}) async {
     bool authException = false;
     try {
       await firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password)
+          .createUserWithEmailAndPassword(
+              email: userModel.email, password: userModel.password)
           .then((userCred) async {
         final user = userCred.user;
         final uid = user?.uid;
@@ -24,6 +25,7 @@ class Authentication {
           await ref.set({'name': '$uid'});
         } on FirebaseException catch (e) {
           authException = true;
+          await user?.delete();
           _exceptionStatus = ExceptionHandler.handleException(e);
         }
       });

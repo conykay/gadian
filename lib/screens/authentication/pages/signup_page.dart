@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
@@ -6,6 +8,7 @@ import 'package:gadian/constants.dart';
 import 'package:gadian/models/providers/authentication_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../../models/user_model.dart';
 import '../../../services/error_handler.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -18,7 +21,8 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
-  var userdata = {};
+  Map userdata = {};
+  UserModel? userModel;
   bool _loading = false;
   AuthStatus? _authStatus;
   ExceptionStatus? _exceptionStatus;
@@ -80,39 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Future<void> _handleSignup(BuildContext context) async {
-    var scaffold = ScaffoldMessenger.of(context);
-    if (_formKey.currentState!.validate()) {
-      if (kDebugMode) {
-        print(userdata);
-      }
-      setState(() => _loading = true);
-      await Provider.of<Authprovider>(context, listen: false)
-          .createAccount(
-              email: userdata['email'], password: userdata['password'])
-          .then((value) => value.runtimeType == AuthStatus
-              ? _authStatus = value
-              : _exceptionStatus = value);
-      if (_authStatus != AuthStatus.successful) {
-        setState(() => _loading = false);
-        String error;
-        if (_exceptionStatus != null) {
-          error = ExceptionHandler.generateErrorMessage(_exceptionStatus);
-        } else {
-          error = AuthExceptionHandler.generateErrorMessage(_authStatus);
-        }
-        scaffold.showMaterialBanner(
-          infoMaterialBanner(
-            content: error,
-            icon: Icons.highlight_remove_outlined,
-            color: Colors.redAccent,
-            onPressed: () => scaffold.hideCurrentMaterialBanner(),
-          ),
-        );
-      }
-    }
-  }
-
+  //sign up form
   Padding _buildSignUpForm() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
@@ -123,6 +95,8 @@ class _SignUpPageState extends State<SignUpPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
+                initialValue: userdata['name'],
+                onChanged: (value) => userdata = {...userdata, 'name': value},
                 validator: (value) => value == null || value.isEmpty
                     ? 'This field cannot be empty.'
                     : null,
@@ -135,6 +109,7 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 keyboardType: TextInputType.emailAddress,
+                initialValue: userdata['email'],
                 onChanged: (value) => userdata = {...userdata, 'email': value},
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -153,6 +128,9 @@ class _SignUpPageState extends State<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 keyboardType: TextInputType.phone,
+                initialValue: userdata['phoneNumber'],
+                onChanged: (value) =>
+                    userdata = {...userdata, 'phoneNumber': value},
                 validator: (value) => value == null || value.isEmpty
                     ? 'This field cannot be empty.'
                     : null,
@@ -185,5 +163,40 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
+  }
+
+  // sign up logic
+  Future<void> _handleSignup(BuildContext context) async {
+    var scaffold = ScaffoldMessenger.of(context);
+    if (_formKey.currentState!.validate()) {
+      var data = jsonEncode(userdata);
+      UserModel userinfo = UserModel.fromJson(jsonDecode(data));
+      if (kDebugMode) {
+        print(userinfo);
+      }
+      setState(() => _loading = true);
+      await Provider.of<Authprovider>(context, listen: false)
+          .createAccount(userModel: userinfo)
+          .then((value) => value.runtimeType == AuthStatus
+              ? _authStatus = value
+              : _exceptionStatus = value);
+      if (_authStatus != AuthStatus.successful) {
+        setState(() => _loading = false);
+        String error;
+        if (_exceptionStatus != null) {
+          error = ExceptionHandler.generateErrorMessage(_exceptionStatus);
+        } else {
+          error = AuthExceptionHandler.generateErrorMessage(_authStatus);
+        }
+        scaffold.showMaterialBanner(
+          infoMaterialBanner(
+            content: error,
+            icon: Icons.highlight_remove_outlined,
+            color: Colors.redAccent,
+            onPressed: () => scaffold.hideCurrentMaterialBanner(),
+          ),
+        );
+      }
+    }
   }
 }

@@ -15,6 +15,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final PageController _regController = PageController();
   var _currentIndex = 0;
   final GlobalKey _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void dispose() {
+    _regController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
