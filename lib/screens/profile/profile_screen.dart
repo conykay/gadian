@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gadian/models/providers/authentication_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -9,6 +11,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   String src = 'https://stonegatesl.com/wp-content/uploads/2021/01/avatar.jpg';
+  bool _loading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,16 +59,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
         SizedBox(
           width: 200,
           child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                ),
+            onPressed: () {
+              setState(() => _loading = true);
+              Provider.of<Authprovider>(context, listen: false)
+                  .logout()
+                  .then((value) => setState(() => _loading = false));
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [Text('Logout'), Icon(Icons.logout)],
-              )),
+            ),
+            child: _loading
+                ? CircularProgressIndicator(
+                    color: Colors.white.withOpacity(0.5))
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [Text('Logout'), Icon(Icons.logout)],
+                  ),
+          ),
         )
       ],
     );
