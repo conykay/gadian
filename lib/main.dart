@@ -6,7 +6,7 @@ import 'package:gadian/constants.dart';
 import 'package:gadian/firebase_options.dart';
 import 'package:gadian/models/providers/authentication_provider.dart';
 import 'package:gadian/screens/authentication/registration_screen.dart';
-import 'package:gadian/screens/home_screen.dart';
+import 'package:gadian/screens/profile/profile_screen.dart';
 import 'package:gadian/services/shared_prefrences.dart';
 import 'package:provider/provider.dart';
 
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
                   : (isNew!
                       ? const OnboardingScreen()
                       : const RegistrationScreen()))
-              : const HomeScreen(),
+              : const ProfileScreen(),
         );
       },
     );
