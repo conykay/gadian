@@ -10,7 +10,7 @@ class UserModel {
   final String password;
   final String email;
   final String phoneNumber;
-  @JsonKey(defaultValue: [])
+  @JsonKey(defaultValue: {})
   final List<Contact> contacts;
   UserModel(
       this.name, this.password, this.email, this.phoneNumber, this.contacts);

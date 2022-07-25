@@ -169,12 +169,13 @@ class _SignUpPageState extends State<SignUpPage> {
   Future<void> _handleSignup(BuildContext context) async {
     var scaffold = ScaffoldMessenger.of(context);
     if (_formKey.currentState!.validate()) {
+      setState(() => _loading = true);
+
       var data = jsonEncode(userdata);
       UserModel userinfo = UserModel.fromJson(jsonDecode(data));
       if (kDebugMode) {
         print(userinfo);
       }
-      setState(() => _loading = true);
       await Provider.of<Authprovider>(context, listen: false)
           .createAccount(userModel: userinfo)
           .then((value) => value.runtimeType == AuthStatus

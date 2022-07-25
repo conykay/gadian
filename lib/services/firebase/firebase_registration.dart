@@ -22,7 +22,12 @@ class Authentication {
         final uid = user?.uid;
         final DatabaseReference ref = db.ref('users/$uid');
         try {
-          await ref.set({'name': '$uid'});
+          await ref.set({
+            'name': userModel.name,
+            'phoneNumber': userModel.phoneNumber,
+            'contacts': userModel.contacts,
+          });
+          await user?.updateDisplayName(userModel.name);
         } on FirebaseException catch (e) {
           authException = true;
           await user?.delete();

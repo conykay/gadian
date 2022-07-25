@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 MaterialBanner infoMaterialBanner({
@@ -15,6 +17,7 @@ MaterialBanner infoMaterialBanner({
       ),
     )
   ];
+  final timer = Timer(const Duration(seconds: 5), onPressed);
   return MaterialBanner(
     leading: Icon(
       icon,
@@ -28,5 +31,6 @@ MaterialBanner infoMaterialBanner({
     ),
     actions: actions,
     backgroundColor: color,
+    onVisible: () => timer,
   );
 }
