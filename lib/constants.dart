@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gadian/models/onboarding_info.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// Apllication theme
+// Application theme
 ThemeData kThemeData(BuildContext context) => ThemeData(
     textTheme: GoogleFonts.muktaTextTheme(),
     primarySwatch: Colors.red,
@@ -14,7 +14,7 @@ ThemeData kThemeData(BuildContext context) => ThemeData(
         backgroundColor: Colors.white,
         elevation: 0.1,
         titleTextStyle: TextStyle(
-          color: Colors.black87,
+          color: Colors.black54,
           fontSize: 30,
           fontWeight: FontWeight.w400,
         )),

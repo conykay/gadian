@@ -10,6 +10,7 @@ import 'package:gadian/screens/profile/profile_screen.dart';
 import 'package:gadian/services/shared_prefrences.dart';
 import 'package:provider/provider.dart';
 
+import 'models/providers/profile_provider.dart';
 import 'screens/onboarding_screen.dart';
 
 void main() async {
@@ -65,6 +66,9 @@ class _MyAppState extends State<MyApp> {
       providers: [
         ListenableProvider<Authprovider>(
           create: (_) => Authprovider(firebaseAuth),
+        ),
+        Provider<ProfileProvider>(
+          create: (_) => ProfileProvider(),
         ),
       ],
       builder: (context, child) {
