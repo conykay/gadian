@@ -6,7 +6,7 @@ import '../error_handler.dart';
 
 class Authentication {
   final FirebaseAuth firebaseAuth;
-  final FirebaseDatabase db = FirebaseDatabase.instance;
+  final db = FirebaseDatabase.instance;
   Authentication(this.firebaseAuth);
   AuthStatus? _authStatus;
   ExceptionStatus? _exceptionStatus;

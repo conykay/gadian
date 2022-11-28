@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gadian/models/onboarding_info.dart';
 import 'package:gadian/screens/authentication/registration_screen.dart';
-import 'package:gadian/services/shared_prefrences.dart';
 
-import '../constants.dart';
+import '../../constants.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);

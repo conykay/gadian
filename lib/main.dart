@@ -2,16 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gadian/constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/firebase_options.dart';
-import 'package:gadian/models/providers/authentication_provider.dart';
-import 'package:gadian/screens/authentication/registration_screen.dart';
+import 'package:gadian/project_providers.dart';
 import 'package:gadian/screens/profile/profile_screen.dart';
 import 'package:gadian/services/shared_prefrences.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'models/providers/profile_provider.dart';
-import 'screens/onboarding_screen.dart';
+import 'constants.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(
@@ -23,71 +21,53 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  final sharedPreferences = SharedPreferences.getInstance();
+  runApp(const ProviderScope(overrides: [sharedPreferencesServiceProvider.overrideWithValue(SharedPrefsService(sharedPreferences)),],child: MyApp()));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends ConsumerStatefulWidget {
+  const MyApp({
+    Key? key,
+  }) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
-  bool? isNew;
-
-  _checkNewUser() async {
-    isNew = await SharedPrefs().getIsFirstTime('new');
-  }
-
-  bool _isLoggedIn = false;
-
-  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkNewUser();
-  }
-
+class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
-    firebaseAuth.authStateChanges().listen((User? user) {
-      setState(() {
-        if (user == null) {
-          _isLoggedIn = false;
-        } else {
-          _isLoggedIn = true;
-        }
-      });
-    });
-    return MultiProvider(
-      providers: [
-        ListenableProvider<Authprovider>(
-          create: (_) => Authprovider(firebaseAuth),
-        ),
-        Provider<ProfileProvider>(
-          create: (_) => ProfileProvider(),
-        ),
-      ],
-      builder: (context, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: kThemeData(context),
-          home: !_isLoggedIn
-              ? (isNew == null
-                  ? const Scaffold(
-                      body: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : (isNew!
-                      ? const OnboardingScreen()
-                      : const RegistrationScreen()))
-              : const ProfileScreen(),
-        );
-      },
+    final authStateChange = ref.watch(authStateChangesProvider);
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: kThemeData(context),
+      home: authStateChange.when(
+          data: (user) => _authentication(context, user),
+          error: (_, __) => const Scaffold(
+            body: Center(
+              child: Text('Something went wrong'),
+            ),
+          ),
+          loading: () => const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ))
     );
   }
+
+  Widget _authentication(BuildContext context, User? user) {
+    if(user !== null){
+      return const ProfileScreen();
+    }
+    (isNew!
+        ? const OnboardingScreen()
+        : const RegistrationScreen()))
+        : const ProfileScreen(),
+  }
 }
+
+
+
+
+
