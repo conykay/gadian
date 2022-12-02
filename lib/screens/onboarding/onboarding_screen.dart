@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gadian/models/onboarding_info.dart';
-import 'package:gadian/screens/authentication/registration_screen.dart';
+import 'package:gadian/screens/onboarding/onboarding_view_model.dart';
 
 import '../../constants.dart';
 
-class OnboardingScreen extends StatefulWidget {
+class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  ConsumerState createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   int _currentIndex = 0;
   final PageController _controller = PageController();
 
@@ -91,14 +92,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           ? Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: ElevatedButton(
-                                onPressed: () async {
-                                  await SharedPrefs()
-                                      .setSharedPrefs('new', false);
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const RegistrationScreen()),
-                                  );
+                                onPressed: () {
+                                  ref
+                                      .watch(
+                                          onBoardingViewModelProvider.notifier)
+                                      .setOnBoardingComplete();
                                 },
                                 child: const Text('Get Started'),
                               ),
