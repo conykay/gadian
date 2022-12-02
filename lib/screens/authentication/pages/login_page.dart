@@ -1,20 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
-import 'package:gadian/models/providers/authentication_provider.dart';
+import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
-import 'package:provider/provider.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);
   final PageController pageController;
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
   bool _loading = false;
@@ -28,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   var userdata = {};
   @override
   Widget build(BuildContext context) {
+    var scaffold = ScaffoldMessenger.of(context);
     return Column(
       children: [
         kBuildPageTitle(
@@ -44,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  await _handleLogin(context);
+                  await _handleLogin(scaffold);
                 },
                 child: _loading
                     ? CircularProgressIndicator(
@@ -84,28 +85,25 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _handleLogin(BuildContext context) async {
-    var scaffold = ScaffoldMessenger.of(context);
+  Future<void> _handleLogin(ScaffoldMessengerState scaffold) async {
     if (_formKey.currentState!.validate()) {
       if (kDebugMode) {
         print(userdata);
       }
       setState(() => _loading = true);
-      await Provider.of<Authprovider>(context, listen: false)
+      await ref
+          .watch(authenticationViewModelProvider)
           .login(email: userdata['email'], password: userdata['password'])
           .then((value) => _status = value);
-      if (_status != AuthStatus.successful) {
-        setState(() => _loading = false);
-        final error = AuthExceptionHandler.generateErrorMessage(_status);
-        scaffold.showMaterialBanner(
-          infoMaterialBanner(
-            content: error,
-            icon: Icons.highlight_remove_outlined,
-            color: Colors.redAccent,
-            onPressed: () => scaffold.hideCurrentMaterialBanner(),
-          ),
-        );
-      }
+      _handleStatus(scaffold);
+    }
+  }
+
+  void _handleStatus(ScaffoldMessengerState scaffold) {
+    if (_status != AuthStatus.successful) {
+      setState(() => _loading = false);
+      final error = AuthExceptionHandler.generateErrorMessage(_status);
+      _showBanner(scaffold, error);
     }
   }
 
@@ -159,6 +157,17 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _showBanner(ScaffoldMessengerState scaffold, String error) {
+    scaffold.showMaterialBanner(
+      infoMaterialBanner(
+        content: error,
+        icon: Icons.highlight_remove_outlined,
+        color: Colors.redAccent,
+        onPressed: () => scaffold.hideCurrentMaterialBanner(),
       ),
     );
   }

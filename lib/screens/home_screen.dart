@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:gadian/models/providers/authentication_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gadian/screens/authentication/authentication_view_model.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: Text('WELCOME'),
@@ -16,7 +16,8 @@ class HomeScreen extends StatelessWidget {
           children: [
             Text('You are now in buddy dont die.'),
             ElevatedButton(
-              onPressed: () => context.read<Authprovider>().logout(),
+              onPressed: () =>
+                  ref.watch(authenticationViewModelProvider.notifier).logOut(),
               child: Text('Logout'),
             )
           ],

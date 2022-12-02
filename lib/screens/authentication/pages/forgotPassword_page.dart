@@ -1,21 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
-import 'package:gadian/models/providers/authentication_provider.dart';
+import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
-import 'package:provider/provider.dart';
 
-class ForgotPasswordPage extends StatefulWidget {
+class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({Key? key, required this.pageController})
       : super(key: key);
   final PageController pageController;
   @override
-  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
+  ConsumerState<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
+class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
   bool _loading = false;
@@ -23,6 +23,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    var scaffold = ScaffoldMessenger.of(context);
     return Column(
       children: [
         kBuildPageTitle(
@@ -37,7 +38,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
           child: ElevatedButton(
             onPressed: () async {
-              await _handleForgotPassword(context);
+              await _handleForgotPassword(scaffold);
             },
             child: _loading
                 ? CircularProgressIndicator(
@@ -49,41 +50,39 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Future<void> _handleForgotPassword(BuildContext context) async {
-    var scaffold = ScaffoldMessenger.of(context);
+  Future<void> _handleForgotPassword(ScaffoldMessengerState scaffold) async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _loading = true;
       });
-      await Provider.of<Authprovider>(context, listen: false)
+      await ref
+          .watch(authenticationViewModelProvider)
           .resetPassword(email: _email)
           .then((value) => _status = value);
-      if (_status == AuthStatus.successful) {
-        setState(() {
-          _loading = false;
-        });
-        scaffold.showMaterialBanner(infoMaterialBanner(
-          content: 'Email sent successfully. Check your inbox.',
-          icon: Icons.email_outlined,
-          color: Colors.green,
-          onPressed: () => scaffold.hideCurrentMaterialBanner(),
-        ));
-        widget.pageController.previousPage(
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut);
-      } else {
+      if (_status != AuthStatus.successful) {
         setState(() => _loading = false);
         final error = AuthExceptionHandler.generateErrorMessage(_status);
-        scaffold.showMaterialBanner(
-          infoMaterialBanner(
-            content: error,
-            icon: Icons.highlight_remove_outlined,
-            color: Colors.redAccent,
-            onPressed: () => scaffold.hideCurrentMaterialBanner(),
-          ),
-        );
+        _showBanner(
+            scaffold, error, Colors.redAccent, Icons.highlight_remove_outlined);
       }
+      setState(() {
+        _loading = false;
+      });
+      String message = 'Email sent successfully check your inbox.';
+      _showBanner(scaffold, message, Colors.green, Icons.email_outlined);
+      widget.pageController.previousPage(
+          duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
     }
+  }
+
+  void _showBanner(ScaffoldMessengerState scaffold, String message, Color color,
+      IconData icon) {
+    scaffold.showMaterialBanner(infoMaterialBanner(
+      content: message,
+      icon: icon,
+      color: color,
+      onPressed: () => scaffold.hideCurrentMaterialBanner(),
+    ));
   }
 
   _buildForgotPasswordForm() {

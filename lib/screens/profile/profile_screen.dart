@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
-import 'package:gadian/models/providers/authentication_provider.dart';
-import 'package:gadian/models/providers/profile_provider.dart';
 import 'package:gadian/models/user_model.dart';
+import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
-import 'package:provider/provider.dart';
 
-class ProfileScreen extends StatefulWidget {
+//TODO: Implement user info fetching and remove Future builder. Create information retrieval method.
+
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String src = 'https://stonegatesl.com/wp-content/uploads/2021/01/avatar.jpg';
   bool _loading = false;
   bool _resetLoading = false;
@@ -93,7 +94,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<dynamic> _userInfoFuture() {
-    return Provider.of<ProfileProvider>(context, listen: false).getUserInfo();
+    // return Provider.of<ProfileProvider>(context, listen: false).getUserInfo();
+    throw UnimplementedError('this has not been done');
   }
 
   Widget _buildActionButtons() {
@@ -106,8 +108,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             width: 200,
             child: TextButton(
               onPressed: () =>
-                  Provider.of<ProfileProvider>(context, listen: false)
-                      .getUserInfo(),
+                  throw UnimplementedError('Incomplete Implementation'),
+              // Provider.of<ProfileProvider>(context, listen: false)
+              //     .getUserInfo(),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
@@ -123,8 +126,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: ElevatedButton(
             onPressed: () {
               setState(() => _loading = true);
-              Provider.of<Authprovider>(context, listen: false)
-                  .logout()
+              ref
+                  .watch(authenticationViewModelProvider.notifier)
+                  .logOut()
                   .then((value) {
                 setState(() => _loading = false);
               });
@@ -169,24 +173,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 var scaffold = ScaffoldMessenger.of(context);
                 setState(() => _resetLoading = true);
                 AuthStatus? status;
-                await Provider.of<ProfileProvider>(context, listen: false)
-                    .sendPasswordResetEmail()
+                await ref
+                    .watch(authenticationViewModelProvider.notifier)
+                    .resetPassword(email: user.email)
                     .then((value) => status = value);
                 if (status == AuthStatus.successful) {
                   setState(() => _resetLoading = false);
-                  scaffold.showMaterialBanner(infoMaterialBanner(
-                      content: 'Password Reset link sent , Check your inbox. ',
-                      icon: Icons.done_all,
-                      color: Colors.green,
-                      onPressed: () => scaffold.hideCurrentMaterialBanner()));
+                  String message =
+                      'Password Reset link sent , Check your inbox.';
+                  _showBanner(scaffold, message, Icons.done_all, Colors.green);
                 } else {
                   setState(() => _resetLoading = false);
-                  scaffold.showMaterialBanner(infoMaterialBanner(
-                      content:
-                          AuthExceptionHandler.generateErrorMessage(status),
-                      icon: Icons.error,
-                      color: Colors.redAccent,
-                      onPressed: () => scaffold.hideCurrentMaterialBanner()));
+                  String error =
+                      AuthExceptionHandler.generateErrorMessage(status);
+                  _showBanner(scaffold, error, Icons.error, Colors.redAccent);
                 }
               },
               child: Row(
@@ -205,6 +205,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
+  }
+
+  void _showBanner(ScaffoldMessengerState scaffold, String message,
+      IconData icon, Color color) {
+    scaffold.showMaterialBanner(infoMaterialBanner(
+        content: message,
+        icon: icon,
+        color: color,
+        onPressed: () => scaffold.hideCurrentMaterialBanner()));
   }
 
   Widget _userInfo({required String label, required String info}) {

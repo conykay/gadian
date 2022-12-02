@@ -2,23 +2,23 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
-import 'package:gadian/models/providers/authentication_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:gadian/screens/authentication/authentication_view_model.dart';
 
 import '../../../models/user_model.dart';
 import '../../../services/error_handler.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({Key? key, required this.pageController}) : super(key: key);
   final PageController pageController;
   @override
-  State<SignUpPage> createState() => _SignUpPageState();
+  ConsumerState createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends ConsumerState<SignUpPage> {
   bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
   Map userdata = {};
@@ -34,6 +34,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    var scaffold = ScaffoldMessenger.of(context);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -51,7 +52,7 @@ class _SignUpPageState extends State<SignUpPage> {
               children: [
                 ElevatedButton(
                   onPressed: () async {
-                    await _handleSignup(context);
+                    await _handleSignup(scaffold);
                   },
                   child: _loading
                       ? CircularProgressIndicator(
@@ -166,8 +167,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   // sign up logic
-  Future<void> _handleSignup(BuildContext context) async {
-    var scaffold = ScaffoldMessenger.of(context);
+  Future<void> _handleSignup(ScaffoldMessengerState scaffold) async {
     if (_formKey.currentState!.validate()) {
       setState(() => _loading = true);
 
@@ -176,7 +176,8 @@ class _SignUpPageState extends State<SignUpPage> {
       if (kDebugMode) {
         print(userinfo);
       }
-      await Provider.of<Authprovider>(context, listen: false)
+      await ref
+          .watch(authenticationViewModelProvider)
           .createAccount(userModel: userinfo)
           .then((value) => value.runtimeType == AuthStatus
               ? _authStatus = value
@@ -184,20 +185,23 @@ class _SignUpPageState extends State<SignUpPage> {
       if (_authStatus != AuthStatus.successful) {
         setState(() => _loading = false);
         String error;
-        if (_exceptionStatus != null) {
-          error = ExceptionHandler.generateErrorMessage(_exceptionStatus);
-        } else {
-          error = AuthExceptionHandler.generateErrorMessage(_authStatus);
-        }
-        scaffold.showMaterialBanner(
-          infoMaterialBanner(
-            content: error,
-            icon: Icons.highlight_remove_outlined,
-            color: Colors.redAccent,
-            onPressed: () => scaffold.hideCurrentMaterialBanner(),
-          ),
-        );
+        _exceptionStatus != null
+            ? error = ExceptionHandler.generateErrorMessage(_exceptionStatus)
+            : error = AuthExceptionHandler.generateErrorMessage(_authStatus);
+
+        _showBanner(scaffold, error);
       }
     }
+  }
+
+  void _showBanner(ScaffoldMessengerState scaffold, String error) {
+    scaffold.showMaterialBanner(
+      infoMaterialBanner(
+        content: error,
+        icon: Icons.highlight_remove_outlined,
+        color: Colors.redAccent,
+        onPressed: () => scaffold.hideCurrentMaterialBanner(),
+      ),
+    );
   }
 }

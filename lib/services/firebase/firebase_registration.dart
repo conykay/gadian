@@ -1,8 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/models/user_model.dart';
+import 'package:gadian/project_providers.dart';
 
 import '../error_handler.dart';
+
+final authProvider = Provider((ref) {
+  final firebaseAuth = ref.watch(firebaseAuthProvider);
+  return Authentication(firebaseAuth);
+});
 
 class Authentication {
   final FirebaseAuth firebaseAuth;
@@ -21,6 +28,8 @@ class Authentication {
         final user = userCred.user;
         final uid = user?.uid;
         final DatabaseReference ref = db.ref('users/$uid');
+
+        //TODO: Place bellow logic in database service.
         try {
           await ref.set({
             'name': userModel.name,
