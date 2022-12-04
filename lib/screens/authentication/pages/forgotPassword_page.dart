@@ -7,6 +7,8 @@ import 'package:gadian/constants.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
 
+final showLoadingForgotPassword = StateProvider<bool>((ref) => false);
+
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({Key? key, required this.pageController})
       : super(key: key);
@@ -18,7 +20,6 @@ class ForgotPasswordPage extends ConsumerStatefulWidget {
 class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   String _email = '';
-  bool _loading = false;
   AuthStatus? _status;
 
   @override
@@ -37,10 +38,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
           child: ElevatedButton(
-            onPressed: () async {
-              await _handleForgotPassword(scaffold);
-            },
-            child: _loading
+            onPressed: () => _handleForgotPassword(scaffold),
+            child: ref.watch(showLoadingForgotPassword)
                 ? CircularProgressIndicator(
                     color: Colors.white.withOpacity(0.5))
                 : const Text('Send Reset email'),
@@ -52,26 +51,25 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   Future<void> _handleForgotPassword(ScaffoldMessengerState scaffold) async {
     if (_formKey.currentState!.validate()) {
-      setState(() {
-        _loading = true;
-      });
+      ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
       await ref
-          .watch(authenticationViewModelProvider)
+          .watch(authenticationViewModelProvider.notifier)
           .resetPassword(email: _email)
           .then((value) => _status = value);
       if (_status != AuthStatus.successful) {
-        setState(() => _loading = false);
+        ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
         final error = AuthExceptionHandler.generateErrorMessage(_status);
         _showBanner(
             scaffold, error, Colors.redAccent, Icons.highlight_remove_outlined);
+      } else {
+        ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
+
+        String message = 'Email sent successfully check your inbox.';
+        _showBanner(scaffold, message, Colors.green, Icons.email_outlined);
+        widget.pageController.previousPage(
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOut);
       }
-      setState(() {
-        _loading = false;
-      });
-      String message = 'Email sent successfully check your inbox.';
-      _showBanner(scaffold, message, Colors.green, Icons.email_outlined);
-      widget.pageController.previousPage(
-          duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
     }
   }
 
@@ -85,7 +83,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     ));
   }
 
-  _buildForgotPasswordForm() {
+  Widget _buildForgotPasswordForm() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
       child: Form(

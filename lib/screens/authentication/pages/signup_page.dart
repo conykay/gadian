@@ -11,6 +11,9 @@ import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import '../../../models/user_model.dart';
 import '../../../services/error_handler.dart';
 
+final showPasswordSignUp = StateProvider<bool>((ref) => false);
+final loadingSignUp = StateProvider<bool>((ref) => false);
+
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({Key? key, required this.pageController}) : super(key: key);
   final PageController pageController;
@@ -19,17 +22,13 @@ class SignUpPage extends ConsumerStatefulWidget {
 }
 
 class _SignUpPageState extends ConsumerState<SignUpPage> {
-  bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
   Map userdata = {};
   UserModel? userModel;
-  bool _loading = false;
   AuthStatus? _authStatus;
   ExceptionStatus? _exceptionStatus;
   void _toggle() {
-    setState(() {
-      _showPassword = !_showPassword;
-    });
+    ref.watch(showPasswordSignUp.notifier).update((state) => state = !state);
   }
 
   @override
@@ -51,10 +50,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             child: Column(
               children: [
                 ElevatedButton(
-                  onPressed: () async {
-                    await _handleSignup(scaffold);
-                  },
-                  child: _loading
+                  onPressed: () => _handleSignup(scaffold),
+                  child: ref.watch(loadingSignUp)
                       ? CircularProgressIndicator(
                           color: Colors.white.withOpacity(0.5))
                       : const Text('Sign up'),
@@ -143,7 +140,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
-                obscureText: _showPassword,
+                obscureText: ref.watch(showPasswordSignUp),
                 onChanged: (value) =>
                     userdata = {...userdata, 'password': value},
                 validator: (value) => value == null || value.isEmpty
@@ -153,7 +150,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                   labelText: 'Password',
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _showPassword ? Icons.visibility_off : Icons.visibility,
+                      ref.watch(showPasswordSignUp)
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: _toggle,
                   ),
@@ -168,8 +167,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   // sign up logic
   Future<void> _handleSignup(ScaffoldMessengerState scaffold) async {
+    final loadingNotifier = ref.watch(loadingSignUp.notifier);
     if (_formKey.currentState!.validate()) {
-      setState(() => _loading = true);
+      loadingNotifier.update((state) => !state);
 
       var data = jsonEncode(userdata);
       UserModel userinfo = UserModel.fromJson(jsonDecode(data));
@@ -177,13 +177,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
         print(userinfo);
       }
       await ref
-          .watch(authenticationViewModelProvider)
-          .createAccount(userModel: userinfo)
+          .watch(authenticationViewModelProvider.notifier)
+          .createAccount(userinfo)
           .then((value) => value.runtimeType == AuthStatus
               ? _authStatus = value
               : _exceptionStatus = value);
       if (_authStatus != AuthStatus.successful) {
-        setState(() => _loading = false);
+        loadingNotifier.update((state) => !state);
         String error;
         _exceptionStatus != null
             ? error = ExceptionHandler.generateErrorMessage(_exceptionStatus)

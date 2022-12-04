@@ -6,6 +6,9 @@ import 'package:gadian/screens/onboarding/onboarding_view_model.dart';
 
 import '../../constants.dart';
 
+//Todo:test if this breaks page navigation.
+final currentIndex = StateProvider<int>((ref) => 0);
+
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
 
@@ -14,21 +17,19 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 }
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
-  int _currentIndex = 0;
   final PageController _controller = PageController();
 
   AnimatedContainer _dotsBuilder(index) => AnimatedContainer(
         duration: const Duration(milliseconds: 400),
-        margin: _currentIndex == index
+        margin: currentIndex == index
             ? const EdgeInsets.symmetric(horizontal: 2)
             : EdgeInsets.zero,
         height: 8,
-        width: _currentIndex == index ? 20 : 8,
+        width: currentIndex == index ? 20 : 8,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color: _currentIndex == index
-              ? Colors.red
-              : Colors.grey.withOpacity(0.5),
+          color:
+              currentIndex == index ? Colors.red : Colors.grey.withOpacity(0.5),
         ),
         curve: Curves.easeIn,
       );
@@ -40,6 +41,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final indexNotifier = ref.watch(currentIndex.notifier);
     return Scaffold(
         body: SafeArea(
       child: Column(
@@ -49,9 +51,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: PageView.builder(
               controller: _controller,
               itemCount: kOnboardingInfo.length,
-              onPageChanged: (index) => setState(() {
-                _currentIndex = index;
-              }),
+              onPageChanged: (index) =>
+                  indexNotifier.update((state) => state = index),
               itemBuilder: (context, index) {
                 OnboardingInfo current = kOnboardingInfo[index];
                 return Padding(
@@ -92,12 +93,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ? Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
                               child: ElevatedButton(
-                                onPressed: () {
-                                  ref
-                                      .watch(
-                                          onBoardingViewModelProvider.notifier)
-                                      .setOnBoardingComplete();
-                                },
+                                onPressed: () => onGetStarted(),
                                 child: const Text('Get Started'),
                               ),
                             )
@@ -141,5 +137,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ],
       ),
     ));
+  }
+
+  Future<void> onGetStarted() async {
+    final onBoardingProvider = ref.watch(onBoardingViewModelProvider.notifier);
+    await onBoardingProvider.setOnBoardingComplete();
   }
 }

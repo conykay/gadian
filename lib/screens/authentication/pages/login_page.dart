@@ -7,6 +7,9 @@ import 'package:gadian/constants.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
 
+final showPasswordLogin = StateProvider<bool>((ref) => false);
+final loadingLogin = StateProvider<bool>((ref) => false);
+
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);
   final PageController pageController;
@@ -15,14 +18,10 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  bool _showPassword = true;
   final _formKey = GlobalKey<FormState>();
-  bool _loading = false;
   AuthStatus? _status;
   void _toggle() {
-    setState(() {
-      _showPassword = !_showPassword;
-    });
+    ref.watch(showPasswordLogin.notifier).update((state) => !state);
   }
 
   var userdata = {};
@@ -47,7 +46,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 onPressed: () async {
                   await _handleLogin(scaffold);
                 },
-                child: _loading
+                child: ref.watch(loadingLogin)
                     ? CircularProgressIndicator(
                         color: Colors.white.withOpacity(0.5))
                     : const Text('Login'),
@@ -90,9 +89,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (kDebugMode) {
         print(userdata);
       }
-      setState(() => _loading = true);
+      ref.watch(loadingLogin.notifier).update((state) => !state);
       await ref
-          .watch(authenticationViewModelProvider)
+          .watch(authenticationViewModelProvider.notifier)
           .login(email: userdata['email'], password: userdata['password'])
           .then((value) => _status = value);
       _handleStatus(scaffold);
@@ -101,7 +100,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _handleStatus(ScaffoldMessengerState scaffold) {
     if (_status != AuthStatus.successful) {
-      setState(() => _loading = false);
+      ref.watch(loadingLogin.notifier).update((state) => !state);
       final error = AuthExceptionHandler.generateErrorMessage(_status);
       _showBanner(scaffold, error);
     }
@@ -123,9 +122,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       userdata = {...userdata, 'email': value},
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "This field cannot be empty";
+                      return 'This field cannot be empty';
                     } else if (kIsValidEmail(value)) {
-                      return "Please enter a valid email address";
+                      return 'Please enter a valid email address';
                     }
                     return null;
                   },
@@ -137,17 +136,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
-                  obscureText: _showPassword,
+                  obscureText: ref.watch(showPasswordLogin),
                   onChanged: (value) =>
                       userdata = {...userdata, 'password': value},
                   validator: (value) => value == null || value.isEmpty
-                      ? "This field cannot be empty."
+                      ? 'This field cannot be empty.'
                       : null,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _showPassword ? Icons.visibility_off : Icons.visibility,
+                        ref.watch(showPasswordLogin)
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                       onPressed: _toggle,
                     ),

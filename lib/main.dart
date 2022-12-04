@@ -6,9 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/firebase_options.dart';
 import 'package:gadian/project_providers.dart';
 import 'package:gadian/screens/authentication/registration_screen.dart';
+import 'package:gadian/screens/home_screen.dart';
 import 'package:gadian/screens/onboarding/onboarding_screen.dart';
 import 'package:gadian/screens/onboarding/onboarding_view_model.dart';
-import 'package:gadian/screens/profile/profile_screen.dart';
 import 'package:gadian/services/shared_prefrences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -65,10 +65,12 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   Widget _authentication(BuildContext context, User? user, bool isNewUser) {
-    if (user == null) {
-      return const ProfileScreen();
+    if (user != null) {
+      return const HomeScreen();
     }
-    isNewUser ? const OnboardingScreen() : const RegistrationScreen();
-    throw MissingPluginException('There was a problem fetching the screens');
+    if (isNewUser) {
+      return const OnboardingScreen();
+    }
+    return const RegistrationScreen();
   }
 }
