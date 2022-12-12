@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
+import 'package:gadian/screens/profile/profile_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
 
-//TODO: Implement user info fetching and remove Future builder. Create information retrieval method.
+final loadingProfile = StateProvider((ref) => false);
+final resetLoading = StateProvider((ref) => false);
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -16,13 +18,9 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   String src = 'https://stonegatesl.com/wp-content/uploads/2021/01/avatar.jpg';
-  bool _loading = false;
-  bool _resetLoading = false;
-  late final Future? userInfoFuture;
   @override
   void initState() {
     super.initState();
-    userInfoFuture = _userInfoFuture();
   }
 
   @override
@@ -93,10 +91,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Future<dynamic> _userInfoFuture() {
-    // return Provider.of<ProfileProvider>(context, listen: false).getUserInfo();
-    throw UnimplementedError('this has not been done');
-  }
+  Future<dynamic> _userInfoFuture() =>
+      ref.watch(userProfileViewModelProvider).getUserProfile();
 
   Widget _buildActionButtons() {
     return Column(
@@ -125,12 +121,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           width: 200,
           child: ElevatedButton(
             onPressed: () {
-              setState(() => _loading = true);
+              ref.watch(loadingProfile.notifier).update((state) => !state);
               ref
                   .watch(authenticationViewModelProvider.notifier)
                   .logOut()
                   .then((value) {
-                setState(() => _loading = false);
+                ref.watch(loadingProfile.notifier).update((state) => !state);
               });
             },
             style: ElevatedButton.styleFrom(
@@ -138,7 +134,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 borderRadius: BorderRadius.circular(50),
               ),
             ),
-            child: _loading
+            child: ref.watch(loadingProfile)
                 ? CircularProgressIndicator(
                     color: Colors.white.withOpacity(0.5))
                 : Row(
@@ -171,19 +167,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ),
               onPressed: () async {
                 var scaffold = ScaffoldMessenger.of(context);
-                setState(() => _resetLoading = true);
+                _toggleReset;
                 AuthStatus? status;
                 await ref
                     .watch(authenticationViewModelProvider.notifier)
                     .resetPassword(email: user.email)
                     .then((value) => status = value);
                 if (status == AuthStatus.successful) {
-                  setState(() => _resetLoading = false);
+                  _toggleReset;
                   String message =
                       'Password Reset link sent , Check your inbox.';
                   _showBanner(scaffold, message, Icons.done_all, Colors.green);
                 } else {
-                  setState(() => _resetLoading = false);
+                  _toggleReset;
                   String error =
                       AuthExceptionHandler.generateErrorMessage(status);
                   _showBanner(scaffold, error, Icons.error, Colors.redAccent);
@@ -193,7 +189,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Change password'),
-                  _resetLoading
+                  ref.watch(resetLoading)
                       ? const CircularProgressIndicator(
                           color: Colors.red,
                         )
@@ -206,6 +202,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
     );
   }
+
+  void _toggleReset() =>
+      ref.watch(resetLoading.notifier).update((state) => !state);
 
   void _showBanner(ScaffoldMessengerState scaffold, String message,
       IconData icon, Color color) {

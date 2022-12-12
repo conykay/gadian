@@ -43,9 +43,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: Column(
             children: [
               ElevatedButton(
-                onPressed: () async {
-                  await _handleLogin(scaffold);
-                },
+                onPressed: () => _handleLogin(scaffold),
                 child: ref.watch(loadingLogin)
                     ? CircularProgressIndicator(
                         color: Colors.white.withOpacity(0.5))
@@ -147,8 +145,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     suffixIcon: IconButton(
                       icon: Icon(
                         ref.watch(showPasswordLogin)
-                            ? Icons.visibility_off
-                            : Icons.visibility,
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: _toggle,
                     ),

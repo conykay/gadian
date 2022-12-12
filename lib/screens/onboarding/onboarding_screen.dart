@@ -18,18 +18,18 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _controller = PageController();
-
-  AnimatedContainer _dotsBuilder(index) => AnimatedContainer(
+  AnimatedContainer _dotsBuilder(index, WidgetRef ref) => AnimatedContainer(
         duration: const Duration(milliseconds: 400),
-        margin: currentIndex == index
+        margin: ref.watch(currentIndex) == index
             ? const EdgeInsets.symmetric(horizontal: 2)
             : EdgeInsets.zero,
         height: 8,
-        width: currentIndex == index ? 20 : 8,
+        width: ref.watch(currentIndex) == index ? 20 : 8,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
-          color:
-              currentIndex == index ? Colors.red : Colors.grey.withOpacity(0.5),
+          color: ref.watch(currentIndex) == index
+              ? Colors.red
+              : Colors.grey.withOpacity(0.5),
         ),
         curve: Curves.easeIn,
       );
@@ -130,7 +130,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 kOnboardingInfo.length,
-                (index) => _dotsBuilder(index),
+                (index) => _dotsBuilder(index, ref),
               ),
             ),
           )

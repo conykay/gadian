@@ -1,24 +1,26 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:gadian/services/error_handler.dart';
 
 import '../../models/user_model.dart';
 
 class UserProfile {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final User? _user = FirebaseAuth.instance.currentUser;
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
   ExceptionStatus? _status;
+
   Future<dynamic> getUserInfo() async {
-    final DatabaseReference ref =
-        FirebaseDatabase.instance.ref('users/${_user?.uid}');
+    final currentProfileRef = _db.doc('users/${_user?.uid}');
     UserModel userModel;
     var userdata = {
       'email': _user?.email,
     };
     try {
-      DataSnapshot snapshot = await ref.get();
-      Map info = snapshot.value as Map;
+      DocumentSnapshot snapshot = await currentProfileRef.get();
+      Map info = snapshot.data() as Map<String, dynamic>;
       userdata = {...userdata, ...info};
       var data = jsonEncode(userdata);
       userModel = UserModel.fromJson(jsonDecode(data));
@@ -30,16 +32,15 @@ class UserProfile {
     return _status;
   }
 
-  Future<AuthStatus> sendPasswordResetEmail() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    AuthStatus status;
-    try {
-      String email = _user?.email ?? '';
-      await auth.sendPasswordResetEmail(email: email);
-      status = AuthStatus.successful;
-    } on FirebaseAuthException catch (e) {
-      status = AuthExceptionHandler.handleAuthException(e);
-    }
-    return status;
-  }
+  // Future<AuthStatus> sendPasswordResetEmail() async {
+  //   AuthStatus status;
+  //   try {
+  //     String email = _user?.email ?? '';
+  //     await _auth.sendPasswordResetEmail(email: email);
+  //     status = AuthStatus.successful;
+  //   } on FirebaseAuthException catch (e) {
+  //     status = AuthExceptionHandler.handleAuthException(e);
+  //   }
+  //   return status;
+  // }
 }

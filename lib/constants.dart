@@ -67,7 +67,7 @@ final List<OnboardingInfo> kOnboardingInfo = [
     'images/welcome.svg',
   ),
   OnboardingInfo(
-    'Your gardians',
+    'Your guardians',
     'Add your trusted contacts on the platform and customise what kind of alert is sent to them , You can have multiple alerts specific to friends or family.',
     'images/addfriends.svg',
   ),

@@ -51,19 +51,18 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
 
   Future<void> _handleForgotPassword(ScaffoldMessengerState scaffold) async {
     if (_formKey.currentState!.validate()) {
-      ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
+      _toggle;
       await ref
           .watch(authenticationViewModelProvider.notifier)
           .resetPassword(email: _email)
           .then((value) => _status = value);
       if (_status != AuthStatus.successful) {
-        ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
+        _toggle;
         final error = AuthExceptionHandler.generateErrorMessage(_status);
         _showBanner(
             scaffold, error, Colors.redAccent, Icons.highlight_remove_outlined);
       } else {
-        ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
-
+        _toggle;
         String message = 'Email sent successfully check your inbox.';
         _showBanner(scaffold, message, Colors.green, Icons.email_outlined);
         widget.pageController.previousPage(
@@ -72,6 +71,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       }
     }
   }
+
+  void _toggle() =>
+      ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
 
   void _showBanner(ScaffoldMessengerState scaffold, String message, Color color,
       IconData icon) {
@@ -98,9 +100,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   onChanged: (value) => _email = value,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "This field cannot be empty";
+                      return 'This field cannot be empty';
                     } else if (kIsValidEmail(value)) {
-                      return "Please enter a valid email address";
+                      return 'Please enter a valid email address';
                     }
                     return null;
                   },

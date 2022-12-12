@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/project_providers.dart';
@@ -13,7 +13,7 @@ final authProvider = Provider((ref) {
 
 class Authentication {
   final FirebaseAuth firebaseAuth;
-  final db = FirebaseDatabase.instance;
+  final db = FirebaseFirestore.instance;
   Authentication(this.firebaseAuth);
   AuthStatus? _authStatus;
   ExceptionStatus? _exceptionStatus;
@@ -27,14 +27,13 @@ class Authentication {
           .then((userCred) async {
         final user = userCred.user;
         final uid = user?.uid;
-        final DatabaseReference ref = db.ref('users/$uid');
+        final ref = db.doc('users/$uid');
 
         //TODO: Place bellow logic in database service.
         try {
           await ref.set({
             'name': userModel.name,
             'phoneNumber': userModel.phoneNumber,
-            'contacts': userModel.contacts,
           });
           await user?.updateDisplayName(userModel.name);
         } on FirebaseException catch (e) {
