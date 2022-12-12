@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/project_providers.dart';
+import 'package:gadian/services/firebase/firestore_paths.dart';
 
 import '../error_handler.dart';
 
@@ -27,7 +28,7 @@ class Authentication {
           .then((userCred) async {
         final user = userCred.user;
         final uid = user?.uid;
-        final ref = db.doc('users/$uid');
+        final ref = db.doc(FireStorePath.userProfile(uid as String));
 
         //TODO: Place bellow logic in database service.
         try {

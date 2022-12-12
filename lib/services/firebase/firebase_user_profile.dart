@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gadian/services/error_handler.dart';
+import 'package:gadian/services/firebase/firestore_paths.dart';
 
 import '../../models/user_model.dart';
 
@@ -13,7 +14,8 @@ class UserProfile {
   ExceptionStatus? _status;
 
   Future<dynamic> getUserInfo() async {
-    final currentProfileRef = _db.doc('users/${_user?.uid}');
+    final currentProfileRef =
+        _db.doc(FireStorePath.userProfile(_user?.uid as String));
     UserModel userModel;
     var userdata = {
       'email': _user?.email,
