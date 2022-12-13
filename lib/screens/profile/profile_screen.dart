@@ -30,65 +30,61 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(title: const Text('Profile')),
-      body: FutureBuilder(
-          future: _userInfoFuture(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              if (snapshot.data.runtimeType == UserModel) {
-                UserModel? userData = snapshot.data as UserModel?;
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        _buildUserImage(image: userData?.imageUrl),
-                        _buildUserInfoSection(user: userData),
-                        Divider(
-                          thickness: 4,
-                          color: Colors.grey.withOpacity(0.1),
-                        ),
-                        _buildActionButtons()
-                      ],
-                    ),
+    return FutureBuilder(
+        future: _userInfoFuture(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            if (snapshot.data.runtimeType == UserModel) {
+              UserModel? userData = snapshot.data as UserModel?;
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildUserImage(image: userData?.imageUrl),
+                      _buildUserInfoSection(user: userData),
+                      Divider(
+                        thickness: 4,
+                        color: Colors.grey.withOpacity(0.1),
+                      ),
+                      _buildActionButtons()
+                    ],
                   ),
-                );
-              }
-              return Center(
-                child: Column(children: [
-                  const Icon(
-                    Icons.error,
-                    size: 30,
-                  ),
-                  Text(
-                    ExceptionHandler.generateErrorMessage(snapshot.data),
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ]),
-              );
-            } else {
-              return Center(
-                child: Column(children: [
-                  const Icon(
-                    Icons.error,
-                    size: 30,
-                  ),
-                  Text(
-                    snapshot.error.toString(),
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                ]),
+                ),
               );
             }
-          }),
-    );
+            return Center(
+              child: Column(children: [
+                const Icon(
+                  Icons.error,
+                  size: 30,
+                ),
+                Text(
+                  ExceptionHandler.generateErrorMessage(snapshot.data),
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ]),
+            );
+          } else {
+            return Center(
+              child: Column(children: [
+                const Icon(
+                  Icons.error,
+                  size: 30,
+                ),
+                Text(
+                  snapshot.error.toString(),
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ]),
+            );
+          }
+        });
   }
 
   Future<dynamic> _userInfoFuture() =>
@@ -238,7 +234,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         alignment: Alignment.bottomRight,
         children: [
           CircleAvatar(
-            radius: 100,
+            radius: 80,
             backgroundColor: Colors.white,
             backgroundImage: NetworkImage(src),
           ),

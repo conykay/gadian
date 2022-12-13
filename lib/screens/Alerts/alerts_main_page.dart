@@ -13,13 +13,8 @@ class AlertMainPage extends ConsumerStatefulWidget {
 class _AlertMainPageState extends ConsumerState<AlertMainPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Main alerts page'),
-      ),
-      body: const Center(
-        child: CircularProgressIndicator(),
-      ),
+    return const Center(
+      child: CircularProgressIndicator(),
     );
   }
 }

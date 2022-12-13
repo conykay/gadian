@@ -13,13 +13,8 @@ class ContactsMainPage extends ConsumerStatefulWidget {
 class _ContactsMainPageState extends ConsumerState<ContactsMainPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Add and Group contacts here.'),
-      ),
-      body: const Center(
+    return const Center(
         child: CircularProgressIndicator(),
-      ),
-    );
+      );
   }
 }

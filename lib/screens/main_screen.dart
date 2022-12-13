@@ -13,25 +13,34 @@ class MainScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const _navigationItems = <BottomMenuItem>[
+    int nIndex = ref.watch(navigatorIndex);
+    const navigationItems = <BottomMenuItem>[
       BottomMenuItem(iconData: Icons.warning_sharp, label: 'Alerts'),
       BottomMenuItem(iconData: Icons.contacts, label: 'Contacts'),
       BottomMenuItem(iconData: Icons.person, label: 'Profile')
     ];
-    const _buildBody = <Widget>[
+    const buildBody = <Widget>[
       AlertMainPage(),
       ContactsMainPage(),
       ProfileScreen()
     ];
     return Scaffold(
-      body: _buildBody[ref.watch(navigatorIndex)],
+      appBar: AppBar(
+        title: Text(navigationItems[nIndex].label),
+      ),
+      body: IndexedStack(
+        index: nIndex,
+        children: buildBody,
+      ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.shifting,
         onTap: (index) =>
             ref.watch(navigatorIndex.notifier).update((state) => state = index),
-        currentIndex: ref.watch(navigatorIndex),
+        currentIndex: nIndex,
         showUnselectedLabels: false,
         unselectedItemColor: Colors.grey,
-        items: _navigationItems
+        selectedItemColor: Theme.of(context).primaryColor,
+        items: navigationItems
             .map((BottomMenuItem item) => BottomNavigationBarItem(
                   icon: Icon(item.iconData),
                   label: item.label,

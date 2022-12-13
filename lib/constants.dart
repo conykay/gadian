@@ -11,13 +11,13 @@ ThemeData kThemeData(BuildContext context) => ThemeData(
           onPrimary: Colors.red.shade50,
         ),
     appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.white,
-        elevation: 0.1,
-        titleTextStyle: TextStyle(
-          color: Colors.black54,
-          fontSize: 30,
-          fontWeight: FontWeight.w400,
-        )),
+      elevation: 0.1,
+      titleTextStyle: TextStyle(
+        color: Colors.white70,
+        fontSize: 25,
+        fontWeight: FontWeight.w400,
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       isDense: true,
       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
