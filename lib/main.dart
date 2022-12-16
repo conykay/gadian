@@ -98,7 +98,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Widget _authentication(BuildContext context, User? user, bool isNewUser) {
     if (user != null) {
-      return const MainScreen();
+      return MainScreen();
     }
     if (isNewUser) {
       return const OnboardingScreen();

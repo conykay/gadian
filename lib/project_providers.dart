@@ -9,8 +9,10 @@ final firebaseAuthProvider =
 final authStateChangesProvider = StreamProvider.autoDispose<User?>(
     (ref) => ref.watch(firebaseAuthProvider).authStateChanges());
 
-final cloudFireStoreProvider =
-    Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
+//Make the instance dependent on the auth state changes. whether it helps or not is inconclusive.
+final cloudFireStoreProvider = Provider<FirebaseFirestore>((ref) {
+  return FirebaseFirestore.instance;
+});
 
 //Internet connection status Provider.
 final internetChecker = StreamProvider<InternetConnectionStatus>(
