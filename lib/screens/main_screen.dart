@@ -47,11 +47,13 @@ class MainScreen extends ConsumerWidget {
       BottomMenuItem(iconData: Icons.contacts, label: 'Contacts'),
       BottomMenuItem(iconData: Icons.person, label: 'Profile')
     ];
+
     var buildBody = <Widget>[
       AlertMainPage(),
       ContactsMainPage(navigatorKey: _contactsKey),
       ProfileScreen()
     ];
+
     void showSnackBar() {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

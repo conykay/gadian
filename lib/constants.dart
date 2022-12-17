@@ -13,7 +13,7 @@ ThemeData kThemeData(BuildContext context) => ThemeData(
     appBarTheme: const AppBarTheme(
       elevation: 0.1,
       titleTextStyle: TextStyle(
-        color: Colors.white70,
+        color: Colors.white,
         fontSize: 25,
         fontWeight: FontWeight.w400,
       ),
