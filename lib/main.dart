@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -55,18 +56,37 @@ class _MyAppState extends ConsumerState<MyApp> {
       _showInternetStatusBanner(next.toString());
     });
 
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: kThemeData(context),
-        scaffoldMessengerKey: scaffoldKey,
-        home: authStateChange.when(
-            data: (user) => _authentication(context, user, isNewUser),
-            error: (_, __) => const Scaffold(
-                body: Center(child: Text('Something went wrong'))),
-            loading: () => const Scaffold(
-                    body: Center(
-                  child: CircularProgressIndicator(),
-                ))));
+    return DynamicColorBuilder(
+        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+      ColorScheme lightColorScheme;
+      ColorScheme darkColorScheme;
+
+      if (lightDynamic != null && darkDynamic != null) {
+        lightColorScheme = lightDynamic.harmonized();
+        lightColorScheme = lightColorScheme.copyWith(secondary: Colors.red);
+        darkColorScheme = darkDynamic.harmonized();
+        darkColorScheme = darkColorScheme.copyWith(secondary: Colors.red);
+      } else {
+        lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.red);
+        darkColorScheme = ColorScheme.fromSeed(
+            seedColor: Colors.red, brightness: Brightness.dark);
+      }
+
+      return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: kThemeData(context).copyWith(colorScheme: lightColorScheme),
+          darkTheme: kThemeData(context).copyWith(colorScheme: darkColorScheme),
+          themeMode: ThemeMode.system,
+          scaffoldMessengerKey: scaffoldKey,
+          home: authStateChange.when(
+              data: (user) => _authentication(context, user, isNewUser),
+              error: (_, __) => const Scaffold(
+                  body: Center(child: Text('Something went wrong'))),
+              loading: () => const Scaffold(
+                      body: Center(
+                    child: CircularProgressIndicator(),
+                  ))));
+    });
   }
 
   void _showInternetStatusBanner(Object? next) {

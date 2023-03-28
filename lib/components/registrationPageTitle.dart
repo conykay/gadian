@@ -27,13 +27,13 @@ Container kBuildPageTitle(
             children: [
               Text(
                 title,
-                style: Theme.of(context).textTheme.headline4,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               FittedBox(
                 fit: BoxFit.fitWidth,
                 child: Text(
                   info,
-                  style: Theme.of(context).textTheme.subtitle1,
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
               )
             ],

@@ -49,7 +49,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
             child: Column(
               children: [
-                ElevatedButton(
+                FilledButton(
                   onPressed: () => _handleSignup(scaffold),
                   child: ref.watch(loadingSignUp)
                       ? CircularProgressIndicator(

@@ -97,17 +97,13 @@ class MainScreen extends ConsumerWidget {
           index: nIndex,
           children: buildBody,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.shifting,
-          onTap: (index) => ref
+        bottomNavigationBar: NavigationBar(
+          onDestinationSelected: (index) => ref
               .watch(navigatorIndex.notifier)
               .update((state) => state = index),
-          currentIndex: nIndex,
-          showUnselectedLabels: false,
-          unselectedItemColor: Colors.grey,
-          selectedItemColor: Theme.of(context).primaryColor,
-          items: navigationItems
-              .map((BottomMenuItem item) => BottomNavigationBarItem(
+          selectedIndex: nIndex,
+          destinations: navigationItems
+              .map((BottomMenuItem item) => NavigationDestination(
                     icon: Icon(item.iconData),
                     label: item.label,
                   ))
