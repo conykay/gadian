@@ -1,6 +1,7 @@
 import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gadian/models/contact_model.dart';
 import 'package:gadian/screens/Contacts/contacts_view_model.dart';
 
 import '../../../constants.dart';
@@ -16,26 +17,40 @@ class CreateContactsGroup extends ConsumerStatefulWidget {
 
 class _CreateContactsGroupState extends ConsumerState<CreateContactsGroup> {
   @override
+  void initState() {
+    super.initState();
+    ref.read(contactsViewModelProvider.notifier).loadContactsFromDevice();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    ref.watch(contactsViewModelProvider).loadContactsFromDevice();
-    List<Contact> contacts = ref.watch(contactsViewModelProvider).contacts;
+    List<ContactModel> contacts = ref.watch(contactsViewModelProvider);
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTitle(context),
         contacts.isEmpty
-            ? const CircularProgressIndicator()
-            : ListView.builder(
-                itemCount: contacts.length,
-                itemBuilder: (context, index) {
-                  bool? state = false;
-                  return CheckboxListTile(
-                    tileColor: const Color(0xfffff6c3),
-                    value: state,
-                    onChanged: (value) => setState(() {
-                      state = value;
-                    }),
-                  );
-                },
+            ? FloatingActionButton(
+                onPressed: () => ref
+                    .watch(contactsViewModelProvider.notifier)
+                    .loadContactsFromDevice())
+            : Expanded(
+                child: ListView.builder(
+                  itemCount: contacts.length,
+                  itemBuilder: (context, index) {
+                    ContactModel item = contacts[index];
+                    return Card(
+                      child: CheckboxListTile(
+                        value: item.selected,
+                        title: Text(item.name),
+                        subtitle: Text(item.phoneNumber),
+                        onChanged: (value) => ref
+                            .read(contactsViewModelProvider.notifier)
+                            .selected(item.id),
+                      ),
+                    );
+                  },
+                ),
               ),
       ],
     );
@@ -53,9 +68,9 @@ class _CreateContactsGroupState extends ConsumerState<CreateContactsGroup> {
         ),
         Expanded(
           child: Text(
-            'New contact group',
+            'Select new group members',
             textAlign: TextAlign.start,
-            style: kHeadlineText.copyWith(
+            style: kHeadlineText(context).copyWith(
               fontSize: 22,
               color: const Color(0xff11468f),
             ),
@@ -65,3 +80,5 @@ class _CreateContactsGroupState extends ConsumerState<CreateContactsGroup> {
     );
   }
 }
+
+//TODO:Find out how to diaplay the phone numbers better

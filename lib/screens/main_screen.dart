@@ -91,7 +91,9 @@ class MainScreen extends ConsumerWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(navigationItems[nIndex].label),
+          title: Text(
+            navigationItems[nIndex].label,
+          ),
         ),
         body: IndexedStack(
           index: nIndex,

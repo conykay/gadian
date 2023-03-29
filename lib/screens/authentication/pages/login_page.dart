@@ -42,7 +42,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
           child: Column(
             children: [
-              ElevatedButton(
+              FilledButton(
                 onPressed: () => _handleLogin(scaffold),
                 child: ref.watch(loadingLogin)
                     ? CircularProgressIndicator(

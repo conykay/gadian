@@ -28,7 +28,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: ref.watch(currentIndex) == index
-              ? Colors.red
+              ? Theme.of(context).primaryColor
               : Colors.grey.withOpacity(0.5),
         ),
         curve: Curves.easeIn,
@@ -72,7 +72,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           children: [
                             Text(
                               current.title,
-                              style: kHeadlineText,
+                              style: kHeadlineText(context),
                             ),
                             const SizedBox(
                               height: 20,
@@ -83,7 +83,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w400,
-                                color: Colors.black54,
                               ),
                             ),
                           ],
@@ -92,7 +91,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       index + 1 == kOnboardingInfo.length
                           ? Padding(
                               padding: const EdgeInsets.only(bottom: 10.0),
-                              child: ElevatedButton(
+                              child: FilledButton(
                                 onPressed: () => onGetStarted(),
                                 child: const Text('Get Started'),
                               ),

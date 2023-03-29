@@ -37,7 +37,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         _buildForgotPasswordForm(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-          child: ElevatedButton(
+          child: FilledButton(
             onPressed: () => _handleForgotPassword(scaffold),
             child: ref.watch(showLoadingForgotPassword)
                 ? CircularProgressIndicator(

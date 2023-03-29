@@ -6,21 +6,13 @@ import 'package:google_fonts/google_fonts.dart';
 ThemeData kThemeData(BuildContext context) => ThemeData(
       useMaterial3: true,
       textTheme: GoogleFonts.muktaTextTheme(),
-      colorSchemeSeed: Colors.red,
+      colorSchemeSeed: const Color(0xfff73319),
       // primarySwatch: Colors.red,
       // colorScheme: Theme.of(context).colorScheme.copyWith(
       //       primary: Colors.red,
       //       secondary: Colors.red,
       //       onPrimary: Colors.red.shade50,
       //     ),
-      // appBarTheme: const AppBarTheme(
-      //   elevation: 0.1,
-      //   titleTextStyle: TextStyle(
-      //     color: Colors.white,
-      //     fontSize: 25,
-      //     fontWeight: FontWeight.w400,
-      //   ),
-      // ),
       inputDecorationTheme: const InputDecorationTheme(
         // isDense: true,
         filled: true,
@@ -29,22 +21,19 @@ ThemeData kThemeData(BuildContext context) => ThemeData(
           borderSide: BorderSide.none,
         ),
       ),
-      // textButtonTheme: TextButtonThemeData(
-      //   style: TextButton.styleFrom(
-      //     onSurface: Colors.red,
-      //     textStyle: const TextStyle(
-      //       fontSize: 18,
-      //     ),
-      //   ),
-      // ),
-      filledButtonTheme: FilledButtonThemeData(
-          style: FilledButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 50,
-          vertical: 10,
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          textStyle: const TextStyle(
+            fontSize: 18,
+          ),
         ),
-      )),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size.fromHeight(50),
+          textStyle: const TextStyle(fontSize: 18.0),
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size.fromHeight(50),
@@ -76,11 +65,11 @@ final List<OnboardingInfo> kOnboardingInfo = [
 ];
 
 // text styles
-TextStyle kHeadlineText = TextStyle(
-  fontSize: 30,
-  fontWeight: FontWeight.bold,
-  color: Colors.red.shade500,
-);
+TextStyle kHeadlineText(BuildContext context) => TextStyle(
+      fontSize: 30,
+      fontWeight: FontWeight.bold,
+      color: Theme.of(context).primaryColor,
+    );
 
 //email  validation regex.
 bool kIsValidEmail(value) {

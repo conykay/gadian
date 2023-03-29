@@ -14,7 +14,7 @@ class UserModel {
   @JsonKey(defaultValue: '')
   final String password;
   @JsonKey(defaultValue: [])
-  final List<Contact> contacts;
+  final List<ContactModel> contacts;
   UserModel(this.name, this.password, this.email, this.phoneNumber,
       this.contacts, this.imageUrl);
 

@@ -12,7 +12,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       json['email'] as String,
       json['phoneNumber'] as String,
       (json['contacts'] as List<dynamic>?)
-              ?.map((e) => Contact.fromJson(e as Map<String, dynamic>))
+              ?.map((e) => ContactModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       json['imageUrl'] as String? ?? '',
