@@ -12,6 +12,7 @@ import 'package:gadian/screens/main_screen.dart';
 import 'package:gadian/screens/onboarding/onboarding_screen.dart';
 import 'package:gadian/screens/onboarding/onboarding_view_model.dart';
 import 'package:gadian/services/shared_prefrences.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants.dart';
@@ -58,8 +59,90 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: kThemeData(context),
-        darkTheme: kThemeData(context).copyWith(brightness: Brightness.dark),
+        theme: ThemeData(
+          useMaterial3: true,
+          textTheme: GoogleFonts.muktaTextTheme(),
+          colorSchemeSeed: Colors.red,
+          brightness: Brightness.light,
+          inputDecorationTheme: const InputDecorationTheme(
+            // isDense: true,
+            filled: true,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(),
+            ),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              textStyle: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ),
+          filledButtonTheme: FilledButtonThemeData(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              textStyle: const TextStyle(fontSize: 18.0),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 50,
+                vertical: 10,
+              ),
+            ),
+          ),
+        ),
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          textTheme: GoogleFonts.muktaTextTheme(),
+          colorSchemeSeed: Colors.red,
+          brightness: Brightness.dark,
+          // primarySwatch: Colors.red,
+          // colorScheme: Theme.of(context).colorScheme.copyWith(
+          //       primary: Colors.red,
+          //       secondary: Colors.red,
+          //       onPrimary: Colors.red.shade50,
+          //     ),
+          inputDecorationTheme: const InputDecorationTheme(
+            // isDense: true,
+            filled: true,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(),
+            ),
+            border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+          ),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              textStyle: const TextStyle(
+                fontSize: 18,
+              ),
+            ),
+          ),
+          filledButtonTheme: FilledButtonThemeData(
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              textStyle: const TextStyle(fontSize: 18.0),
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(50),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 50,
+                vertical: 10,
+              ),
+            ),
+          ),
+        ),
         themeMode: ThemeMode.system,
         scaffoldMessengerKey: scaffoldKey,
         home: authStateChange.when(

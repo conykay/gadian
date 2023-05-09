@@ -103,12 +103,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   throw UnimplementedError('Incomplete Implementation'),
               // Provider.of<ProfileProvider>(context, listen: false)
               //     .getUserInfo(),
-              child: Row(
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text('Invite Friend'),
-                  Icon(Icons.person_add_alt)
-                ],
+                children: [Text('Invite Friend'), Icon(Icons.person_add_alt)],
               ),
             ),
           ),
@@ -133,9 +130,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: ref.watch(loadingProfile)
                 ? CircularProgressIndicator(
                     color: Colors.white.withOpacity(0.5))
-                : Row(
+                : const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [Text('Logout'), Icon(Icons.logout)],
+                    children: [Text('Logout'), Icon(Icons.logout)],
                   ),
           ),
         )
@@ -186,9 +183,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 children: [
                   const Text('Change password'),
                   ref.watch(resetLoading)
-                      ? const CircularProgressIndicator(
-                          color: Colors.red,
-                        )
+                      ? const CircularProgressIndicator()
                       : const Text(''),
                 ],
               ),
@@ -215,10 +210,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: ListTile(
-        tileColor: Colors.white,
         title: Text(
           label,
-          style: const TextStyle(fontSize: 18),
         ),
         subtitle: Text(
           info,
