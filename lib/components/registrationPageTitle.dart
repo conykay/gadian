@@ -12,12 +12,12 @@ Container kBuildPageTitle(
           child: Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.2),
+                color: Theme.of(context).hintColor.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10)),
             child: Icon(
               icon,
               size: 50,
-              color: Colors.redAccent,
+              color: Theme.of(context).hintColor,
             ),
           ),
         ),

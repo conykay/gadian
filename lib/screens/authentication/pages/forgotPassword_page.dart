@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
@@ -40,8 +39,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           child: FilledButton(
             onPressed: () => _handleForgotPassword(scaffold),
             child: ref.watch(showLoadingForgotPassword)
-                ? CircularProgressIndicator(
-                    color: Colors.white.withOpacity(0.5))
+                ? const CircularProgressIndicator()
                 : const Text('Send Reset email'),
           ),
         ),
@@ -99,9 +97,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) => _email = value,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value!.isEmpty) {
                       return 'This field cannot be empty';
-                    } else if (kIsValidEmail(value)) {
+                    }
+                    if (kIsValidEmail(value)) {
                       return 'Please enter a valid email address';
                     }
                     return null;

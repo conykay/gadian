@@ -95,9 +95,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               child: TextFormField(
                 initialValue: userdata['name'],
                 onChanged: (value) => userdata = {...userdata, 'name': value},
-                validator: (value) => value == null || value.isEmpty
-                    ? 'This field cannot be empty.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'This field cannot be empty.' : null,
                 decoration: const InputDecoration(
                   labelText: 'Full name',
                 ),
@@ -110,7 +109,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 initialValue: userdata['email'],
                 onChanged: (value) => userdata = {...userdata, 'email': value},
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value!.isEmpty) {
                     return 'This field cannot be empty';
                   } else if (kIsValidEmail(value)) {
                     return 'Please enter a valid email address';
@@ -129,9 +128,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 initialValue: userdata['phoneNumber'],
                 onChanged: (value) =>
                     userdata = {...userdata, 'phoneNumber': value},
-                validator: (value) => value == null || value.isEmpty
-                    ? 'This field cannot be empty.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'This field cannot be empty.' : null,
                 decoration: const InputDecoration(
                   labelText: 'Phone number',
                 ),
@@ -143,9 +141,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 obscureText: ref.watch(showPasswordSignUp),
                 onChanged: (value) =>
                     userdata = {...userdata, 'password': value},
-                validator: (value) => value == null || value.isEmpty
-                    ? 'This field cannot be empty.'
-                    : null,
+                validator: (value) =>
+                    value!.isEmpty ? 'This field cannot be empty.' : null,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   suffixIcon: IconButton(

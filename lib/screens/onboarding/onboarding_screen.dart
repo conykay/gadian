@@ -6,7 +6,6 @@ import 'package:gadian/screens/onboarding/onboarding_view_model.dart';
 
 import '../../constants.dart';
 
-//Todo:test if this breaks page navigation.
 final currentIndex = StateProvider<int>((ref) => 0);
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -28,7 +27,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: ref.watch(currentIndex) == index
-              ? Theme.of(context).primaryColor
+              ? Theme.of(context).dividerColor
               : Colors.grey.withOpacity(0.5),
         ),
         curve: Curves.easeIn,
@@ -72,7 +71,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           children: [
                             Text(
                               current.title,
-                              style: kHeadlineText(context),
+                              style: Theme.of(context).textTheme.headlineLarge,
                             ),
                             const SizedBox(
                               height: 20,
@@ -80,10 +79,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                             Text(
                               current.description,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ],
                         ),

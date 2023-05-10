@@ -18,11 +18,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 
 Future<void> main() async {
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.red,
-    ),
-  );
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     statusBarColor: Colors.red,
+  //   ),
+  // );
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -65,10 +65,14 @@ class _MyAppState extends ConsumerState<MyApp> {
           colorSchemeSeed: Colors.red,
           brightness: Brightness.light,
           inputDecorationTheme: const InputDecorationTheme(
-            // isDense: true,
+            isDense: true,
             filled: true,
+            floatingLabelStyle: TextStyle(
+              backgroundColor: Colors.white54,
+            ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(),
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(50)),
             ),
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
@@ -97,23 +101,35 @@ class _MyAppState extends ConsumerState<MyApp> {
               ),
             ),
           ),
+          iconTheme: const IconThemeData(color: Colors.redAccent),
         ),
         darkTheme: ThemeData(
           useMaterial3: true,
-          textTheme: GoogleFonts.muktaTextTheme(),
+          textTheme: GoogleFonts.muktaTextTheme().copyWith(
+            displayLarge: GoogleFonts.mukta(color: Colors.white70),
+            displayMedium: GoogleFonts.mukta(color: Colors.white70),
+            displaySmall: GoogleFonts.mukta(color: Colors.white70),
+            headlineLarge: GoogleFonts.mukta(color: Colors.white70),
+            headlineMedium: GoogleFonts.mukta(color: Colors.white70),
+            headlineSmall: GoogleFonts.mukta(color: Colors.white70),
+            titleLarge: GoogleFonts.mukta(color: Colors.white70),
+            titleMedium: GoogleFonts.mukta(color: Colors.white70),
+            titleSmall: GoogleFonts.mukta(color: Colors.white70),
+            bodyLarge: GoogleFonts.mukta(color: Colors.white70),
+            bodyMedium: GoogleFonts.mukta(color: Colors.white70),
+            labelLarge: GoogleFonts.mukta(color: Colors.white70),
+            bodySmall: GoogleFonts.mukta(color: Colors.white70),
+            labelSmall: GoogleFonts.mukta(color: Colors.white70),
+          ),
           colorSchemeSeed: Colors.red,
           brightness: Brightness.dark,
-          // primarySwatch: Colors.red,
-          // colorScheme: Theme.of(context).colorScheme.copyWith(
-          //       primary: Colors.red,
-          //       secondary: Colors.red,
-          //       onPrimary: Colors.red.shade50,
-          //     ),
           inputDecorationTheme: const InputDecorationTheme(
-            // isDense: true,
+            isDense: true,
             filled: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(),
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.all(Radius.circular(50)),
             ),
             border: OutlineInputBorder(
               borderSide: BorderSide.none,
@@ -129,7 +145,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           ),
           filledButtonTheme: FilledButtonThemeData(
             style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
+              minimumSize: const Size.fromHeight(60),
               textStyle: const TextStyle(fontSize: 18.0),
             ),
           ),
@@ -142,6 +158,7 @@ class _MyAppState extends ConsumerState<MyApp> {
               ),
             ),
           ),
+          iconTheme: const IconThemeData(color: Colors.white70),
         ),
         themeMode: ThemeMode.system,
         scaffoldMessengerKey: scaffoldKey,

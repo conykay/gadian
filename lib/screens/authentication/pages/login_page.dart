@@ -45,8 +45,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               FilledButton(
                 onPressed: () => _handleLogin(scaffold),
                 child: ref.watch(loadingLogin)
-                    ? CircularProgressIndicator(
-                        color: Colors.white.withOpacity(0.5))
+                    ? const CircularProgressIndicator()
                     : const Text('Login'),
               ),
               Row(
@@ -119,7 +118,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   onChanged: (value) =>
                       userdata = {...userdata, 'email': value},
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value!.isEmpty) {
                       return 'This field cannot be empty';
                     } else if (kIsValidEmail(value)) {
                       return 'Please enter a valid email address';
@@ -137,9 +136,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   obscureText: ref.watch(showPasswordLogin),
                   onChanged: (value) =>
                       userdata = {...userdata, 'password': value},
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'This field cannot be empty.'
-                      : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'This field cannot be empty.' : null,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     suffixIcon: IconButton(
