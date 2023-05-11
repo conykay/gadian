@@ -5,6 +5,7 @@ import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 final showLoadingForgotPassword = StateProvider<bool>((ref) => false);
 
@@ -21,46 +22,62 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   String _email = '';
   AuthStatus? _status;
 
+  final emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var scaffold = ScaffoldMessenger.of(context);
-    return Column(
-      children: [
-        kBuildPageTitle(
-          context,
-          'Forgot password!',
-          'Enter your email to receive a password reset link.',
-          Icons.lock_reset,
-        ),
-        const Divider(),
-        _buildForgotPasswordForm(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-          child: FilledButton(
-            onPressed: () => _handleForgotPassword(scaffold),
-            child: ref.watch(showLoadingForgotPassword)
-                ? const CircularProgressIndicator()
-                : const Text('Send Reset email'),
-          ),
-        ),
-      ],
-    );
+    return ref.watch(showLoadingForgotPassword)
+        ? const Center(
+            child: LoadingIndicator(
+              indicatorType: Indicator.ballScaleMultiple,
+              colors: [
+                Colors.red,
+                Colors.lightBlueAccent,
+              ],
+            ),
+          )
+        : Column(
+            children: [
+              kBuildPageTitle(
+                context,
+                'Forgot password!',
+                'Enter your email to receive a password reset link.',
+                Icons.lock_reset,
+              ),
+              const Divider(),
+              _buildForgotPasswordForm(),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                child: FilledButton(
+                  onPressed: () => _handleForgotPassword(scaffold),
+                  child: const Text('Send Reset email'),
+                ),
+              ),
+            ],
+          );
   }
 
   Future<void> _handleForgotPassword(ScaffoldMessengerState scaffold) async {
     if (_formKey.currentState!.validate()) {
-      _toggle;
+      ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
       await ref
           .watch(authenticationViewModelProvider.notifier)
           .resetPassword(email: _email)
           .then((value) => _status = value);
       if (_status != AuthStatus.successful) {
-        _toggle;
         final error = AuthExceptionHandler.generateErrorMessage(_status);
         _showBanner(
             scaffold, error, Colors.redAccent, Icons.highlight_remove_outlined);
       } else {
-        _toggle;
         String message = 'Email sent successfully check your inbox.';
         _showBanner(scaffold, message, Colors.green, Icons.email_outlined);
         widget.pageController.previousPage(
@@ -68,10 +85,8 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             curve: Curves.easeInOut);
       }
     }
+    ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
   }
-
-  void _toggle() =>
-      ref.watch(showLoadingForgotPassword.notifier).update((state) => !state);
 
   void _showBanner(ScaffoldMessengerState scaffold, String message, Color color,
       IconData icon) {
@@ -95,12 +110,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   keyboardType: TextInputType.emailAddress,
-                  onChanged: (value) => _email = value,
+                  controller: emailController,
+                  onChanged: (value) => _email = emailController.text,
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (emailController.text.isEmpty) {
                       return 'This field cannot be empty';
                     }
-                    if (kIsValidEmail(value)) {
+                    if (kIsValidEmail(emailController.text)) {
                       return 'Please enter a valid email address';
                     }
                     return null;

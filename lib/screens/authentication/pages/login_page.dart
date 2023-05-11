@@ -6,6 +6,7 @@ import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 final showPasswordLogin = StateProvider<bool>((ref) => false);
 final loadingLogin = StateProvider<bool>((ref) => false);
@@ -25,60 +26,81 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   }
 
   var userdata = {};
+  var passwordController = TextEditingController();
+  var emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    passwordController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var scaffold = ScaffoldMessenger.of(context);
-    return Column(
-      children: [
-        kBuildPageTitle(
-          context,
-          'Welcome back!',
-          'Access your account to continue.',
-          Icons.key,
-        ),
-        const Divider(),
-        _buildLoginForm(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
-          child: Column(
+
+    return ref.watch(loadingLogin)
+        ? const Center(
+            child: LoadingIndicator(
+              indicatorType: Indicator.ballScaleMultiple,
+              colors: [
+                Colors.red,
+                Colors.lightBlueAccent,
+              ],
+            ),
+          )
+        : Column(
             children: [
-              FilledButton(
-                onPressed: () => _handleLogin(scaffold),
-                child: ref.watch(loadingLogin)
-                    ? const CircularProgressIndicator()
-                    : const Text('Login'),
+              kBuildPageTitle(
+                context,
+                'Welcome back!',
+                'Login to continue',
+                Icons.key,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style: TextStyle(fontSize: 15),
-                  ),
-                  TextButton(
-                    onPressed: () => widget.pageController.previousPage(
-                        duration: const Duration(milliseconds: 400),
-                        curve: Curves.easeIn),
-                    child: const Text(
-                      'Sign up',
-                      style: TextStyle(fontSize: 18),
+              const Divider(),
+              _buildLoginForm(),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+                child: Column(
+                  children: [
+                    FilledButton(
+                      onPressed: () => _handleLogin(scaffold),
+                      child: const Text('Login'),
                     ),
-                  ),
-                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Don't have an account?",
+                          style: TextStyle(fontSize: 15),
+                        ),
+                        TextButton(
+                          onPressed: () => widget.pageController.previousPage(
+                              duration: const Duration(milliseconds: 400),
+                              curve: Curves.easeIn),
+                          child: const Text(
+                            'Sign up',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
+              TextButton(
+                onPressed: () {
+                  widget.pageController.nextPage(
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut);
+                },
+                child: const Text('Forgot password ?'),
+              )
             ],
-          ),
-        ),
-        TextButton(
-          onPressed: () {
-            widget.pageController.nextPage(
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeInOut);
-          },
-          child: const Text('Forgot password ?'),
-        )
-      ],
-    );
+          );
   }
 
   Future<void> _handleLogin(ScaffoldMessengerState scaffold) async {
@@ -114,13 +136,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                  controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) =>
-                      userdata = {...userdata, 'email': value},
+                      userdata = {...userdata, 'email': emailController.text},
                   validator: (value) {
-                    if (value!.isEmpty) {
+                    if (emailController.text.isEmpty) {
                       return 'This field cannot be empty';
-                    } else if (kIsValidEmail(value)) {
+                    }
+                    if (kIsValidEmail(emailController.text)) {
                       return 'Please enter a valid email address';
                     }
                     return null;
@@ -133,11 +157,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                  controller: passwordController,
                   obscureText: ref.watch(showPasswordLogin),
-                  onChanged: (value) =>
-                      userdata = {...userdata, 'password': value},
-                  validator: (value) =>
-                      value!.isEmpty ? 'This field cannot be empty.' : null,
+                  onChanged: (value) => userdata = {
+                    ...userdata,
+                    'password': passwordController.text
+                  },
+                  validator: (value) => passwordController.text.isEmpty
+                      ? 'This field cannot be empty.'
+                      : null,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     suffixIcon: IconButton(

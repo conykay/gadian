@@ -7,6 +7,7 @@ import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
 import '../../../models/user_model.dart';
 import '../../../services/error_handler.dart';
@@ -31,55 +32,78 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     ref.watch(showPasswordSignUp.notifier).update((state) => state = !state);
   }
 
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    usernameController.dispose();
+    emailController.dispose();
+    phoneNumberController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var scaffold = ScaffoldMessenger.of(context);
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          kBuildPageTitle(
-            context,
-            'Sign up',
-            'Create account to continue',
-            Icons.person,
-          ),
-          const Divider(),
-          _buildSignUpForm(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
+    return ref.watch(loadingSignUp)
+        ? const Center(
+            child: LoadingIndicator(
+              indicatorType: Indicator.ballScaleMultiple,
+              colors: [
+                Colors.red,
+                Colors.lightBlueAccent,
+              ],
+            ),
+          )
+        : SingleChildScrollView(
             child: Column(
               children: [
-                FilledButton(
-                  onPressed: () => _handleSignup(scaffold),
-                  child: ref.watch(loadingSignUp)
-                      ? CircularProgressIndicator(
-                          color: Colors.white.withOpacity(0.5))
-                      : const Text('Sign up'),
+                kBuildPageTitle(
+                  context,
+                  'Sign up',
+                  'Create account to continue',
+                  Icons.person,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Already have an account ?',
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    TextButton(
-                      onPressed: () => widget.pageController.nextPage(
-                          duration: const Duration(milliseconds: 400),
-                          curve: Curves.easeIn),
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(fontSize: 18),
+                const Divider(),
+                _buildSignUpForm(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30.0, vertical: 10),
+                  child: Column(
+                    children: [
+                      FilledButton(
+                        onPressed: () => _handleSignup(scaffold),
+                        child: const Text('Sign up'),
                       ),
-                    ),
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Already have an account ?',
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          TextButton(
+                            onPressed: () => widget.pageController.nextPage(
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeIn),
+                            child: const Text(
+                              'Login',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   //sign up form
@@ -93,10 +117,12 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
-                initialValue: userdata['name'],
-                onChanged: (value) => userdata = {...userdata, 'name': value},
-                validator: (value) =>
-                    value!.isEmpty ? 'This field cannot be empty.' : null,
+                controller: usernameController,
+                onChanged: (value) =>
+                    userdata = {...userdata, 'name': usernameController.text},
+                validator: (value) => usernameController.text.isEmpty
+                    ? 'This field cannot be empty.'
+                    : null,
                 decoration: const InputDecoration(
                   labelText: 'Full name',
                 ),
@@ -105,13 +131,15 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
+                controller: emailController,
                 keyboardType: TextInputType.emailAddress,
-                initialValue: userdata['email'],
-                onChanged: (value) => userdata = {...userdata, 'email': value},
+                onChanged: (value) =>
+                    userdata = {...userdata, 'email': emailController.text},
                 validator: (value) {
-                  if (value!.isEmpty) {
+                  if (emailController.text.isEmpty) {
                     return 'This field cannot be empty';
-                  } else if (kIsValidEmail(value)) {
+                  }
+                  if (kIsValidEmail(emailController.text)) {
                     return 'Please enter a valid email address';
                   }
                   return null;
@@ -125,11 +153,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 keyboardType: TextInputType.phone,
-                initialValue: userdata['phoneNumber'],
-                onChanged: (value) =>
-                    userdata = {...userdata, 'phoneNumber': value},
-                validator: (value) =>
-                    value!.isEmpty ? 'This field cannot be empty.' : null,
+                onChanged: (value) => userdata = {
+                  ...userdata,
+                  'phoneNumber': phoneNumberController.text
+                },
+                validator: (value) => phoneNumberController.text.isEmpty
+                    ? 'This field cannot be empty.'
+                    : null,
                 decoration: const InputDecoration(
                   labelText: 'Phone number',
                 ),
@@ -139,10 +169,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 obscureText: ref.watch(showPasswordSignUp),
-                onChanged: (value) =>
-                    userdata = {...userdata, 'password': value},
-                validator: (value) =>
-                    value!.isEmpty ? 'This field cannot be empty.' : null,
+                onChanged: (value) => userdata = {
+                  ...userdata,
+                  'password': passwordController.text
+                },
+                validator: (value) => passwordController.text.isEmpty
+                    ? 'This field cannot be empty.'
+                    : null,
                 decoration: InputDecoration(
                   labelText: 'Password',
                   suffixIcon: IconButton(
