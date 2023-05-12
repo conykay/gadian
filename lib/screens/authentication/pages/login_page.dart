@@ -137,6 +137,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   controller: emailController,
+                  textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (value) =>
                       userdata = {...userdata, 'email': emailController.text},
@@ -158,6 +159,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   controller: passwordController,
+                  textInputAction: TextInputAction.done,
                   obscureText: ref.watch(showPasswordLogin),
                   onChanged: (value) => userdata = {
                     ...userdata,

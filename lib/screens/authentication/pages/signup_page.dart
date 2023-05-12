@@ -118,6 +118,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 controller: usernameController,
+                textInputAction: TextInputAction.next,
                 onChanged: (value) =>
                     userdata = {...userdata, 'name': usernameController.text},
                 validator: (value) => usernameController.text.isEmpty
@@ -132,6 +133,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
                 controller: emailController,
+                textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (value) =>
                     userdata = {...userdata, 'email': emailController.text},
@@ -152,6 +154,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
+                controller: phoneNumberController,
+                textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.phone,
                 onChanged: (value) => userdata = {
                   ...userdata,
@@ -168,6 +172,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextFormField(
+                controller: passwordController,
+                textInputAction: TextInputAction.done,
                 obscureText: ref.watch(showPasswordSignUp),
                 onChanged: (value) => userdata = {
                   ...userdata,
