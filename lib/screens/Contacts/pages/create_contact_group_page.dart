@@ -67,14 +67,9 @@ class _CreateContactsGroupState extends ConsumerState<CreateContactsGroup> {
           ),
         ),
         Expanded(
-          child: Text(
-            'Select new group members',
-            textAlign: TextAlign.start,
-            style: kHeadlineText(context).copyWith(
-              fontSize: 22,
-              color: const Color(0xff11468f),
-            ),
-          ),
+          child: Text('Select new group members',
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.headlineLarge),
         )
       ],
     );

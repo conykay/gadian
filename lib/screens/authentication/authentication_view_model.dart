@@ -27,3 +27,4 @@ class AuthenticationViewModel extends StateNotifier<dynamic> {
   //logout
   Future<void> logOut() => authentication.logout();
 }
+//todo: Use async notifier instead.
