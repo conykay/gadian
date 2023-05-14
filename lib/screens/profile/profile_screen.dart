@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
+import 'package:gadian/constants.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/screens/profile/profile_view_model.dart';
@@ -17,7 +18,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  String src = 'https://stonegatesl.com/wp-content/uploads/2021/01/avatar.jpg';
   @override
   void initState() {
     super.initState();
@@ -30,6 +30,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+  
+    //? is it possible to use riverpods future notifier ?
+    
     return FutureBuilder(
         future: _userInfoFuture(),
         builder: (context, snapshot) {
@@ -164,8 +167,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 AuthStatus? status;
                 await ref
                     .watch(authenticationViewModelProvider.notifier)
-                    .resetPassword(email: user.email)
-                    .then((value) => status = value);
+                    .resetPassword(email: user.email);
                 if (status == AuthStatus.successful) {
                   _toggleReset;
                   String message =

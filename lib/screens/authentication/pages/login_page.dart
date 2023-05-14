@@ -9,7 +9,6 @@ import 'package:gadian/services/error_handler.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
 final showPasswordLogin = StateProvider<bool>((ref) => false);
-final loadingLogin = StateProvider<bool>((ref) => false);
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({Key? key, required this.pageController}) : super(key: key);
@@ -20,7 +19,6 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  AuthStatus? _status;
   void _toggle() {
     ref.watch(showPasswordLogin.notifier).update((state) => !state);
   }
@@ -31,7 +29,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     passwordController.dispose();
     emailController.dispose();
     super.dispose();
@@ -40,8 +37,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   Widget build(BuildContext context) {
     var scaffold = ScaffoldMessenger.of(context);
+    ref.listen<AsyncValue<bool>>(
+      authenticationViewModelProvider,
+      (_, state) => state.whenOrNull(error: (e, stackTrace) {
+        _showBanner(scaffold, e.toString());
+      }),
+    );
 
-    return ref.watch(loadingLogin)
+    final loginState = ref.watch(authenticationViewModelProvider);
+    final isLoading = loginState is AsyncLoading<bool>;
+
+    return isLoading
         ? const Center(
             child: LoadingIndicator(
               indicatorType: Indicator.ballScaleMultiple,
@@ -67,7 +73,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 child: Column(
                   children: [
                     FilledButton(
-                      onPressed: () => _handleLogin(scaffold),
+                      onPressed: () => _handleLogin(),
                       child: const Text('Login'),
                     ),
                     Row(
@@ -103,25 +109,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           );
   }
 
-  Future<void> _handleLogin(ScaffoldMessengerState scaffold) async {
+  Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       if (kDebugMode) {
         print(userdata);
       }
-      ref.watch(loadingLogin.notifier).update((state) => !state);
       await ref
-          .watch(authenticationViewModelProvider.notifier)
-          .login(email: userdata['email'], password: userdata['password'])
-          .then((value) => _status = value);
-      _handleStatus(scaffold);
-    }
-  }
-
-  void _handleStatus(ScaffoldMessengerState scaffold) {
-    if (_status != AuthStatus.successful) {
-      ref.watch(loadingLogin.notifier).update((state) => !state);
-      final error = AuthExceptionHandler.generateErrorMessage(_status);
-      _showBanner(scaffold, error);
+          .read(authenticationViewModelProvider.notifier)
+          .login(email: userdata['email'], password: userdata['password']);
     }
   }
 

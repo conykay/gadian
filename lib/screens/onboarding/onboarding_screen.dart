@@ -17,7 +17,9 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final PageController _controller = PageController();
-  AnimatedContainer _dotsBuilder(index, WidgetRef ref) => AnimatedContainer(
+  AnimatedContainer _dotsBuilder(index, WidgetRef ref, Brightness mode,
+          Color iconLightColor, Color iconDarkColor) =>
+      AnimatedContainer(
         duration: const Duration(milliseconds: 400),
         margin: ref.watch(currentIndex) == index
             ? const EdgeInsets.symmetric(horizontal: 2)
@@ -27,7 +29,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(50),
           color: ref.watch(currentIndex) == index
-              ? Theme.of(context).dividerColor
+              ? mode == Brightness.light
+                  ? iconLightColor
+                  : iconDarkColor
               : Colors.grey.withOpacity(0.5),
         ),
         curve: Curves.easeIn,
@@ -40,7 +44,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final indexNotifier = ref.watch(currentIndex.notifier);
+    final indexNotifier = ref.read(currentIndex.notifier);
+    Brightness mode = Theme.of(context).brightness;
+    Color iconDarkColor = Theme.of(context).colorScheme.secondary;
+    Color iconLightColor = Theme.of(context).colorScheme.primary;
     return Scaffold(
         body: SafeArea(
       child: Column(
@@ -125,7 +132,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 kOnboardingInfo.length,
-                (index) => _dotsBuilder(index, ref),
+                (index) => _dotsBuilder(
+                    index, ref, mode, iconLightColor, iconDarkColor),
               ),
             ),
           )

@@ -1,5 +1,8 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/project_providers.dart';
@@ -9,71 +12,78 @@ import '../error_handler.dart';
 
 final authProvider = Provider((ref) {
   final firebaseAuth = ref.watch(firebaseAuthProvider);
-  return Authentication(firebaseAuth);
+  return Authentication(firebaseAuth: firebaseAuth);
 });
 
 class Authentication {
   final FirebaseAuth firebaseAuth;
   final db = FirebaseFirestore.instance;
-  Authentication(this.firebaseAuth);
-  AuthStatus? _authStatus;
-  ExceptionStatus? _exceptionStatus;
+  Authentication({required this.firebaseAuth});
+
+  //Error handlers
+  String _generateAuthError(e) => AuthExceptionHandler.generateErrorMessage(
+      AuthExceptionHandler.handleAuthException(e));
+  String _generateError(e) => ExceptionHandler.generateErrorMessage(
+      ExceptionHandler.handleException(e));
+
   //Create account
-  Future<dynamic> createAccount({required UserModel userModel}) async {
-    bool authException = false;
+  Future<void> createAccount({required UserModel userModel}) async {
     try {
       await firebaseAuth
           .createUserWithEmailAndPassword(
               email: userModel.email, password: userModel.password)
           .then((userCred) async {
-        final user = userCred.user;
-        final uid = user?.uid;
-        final ref = db.doc(FireStorePath.userProfile(uid as String));
-
-        //TODO: Place bellow logic in database service.
-        try {
-          await ref.set({
-            'name': userModel.name,
-            'phoneNumber': userModel.phoneNumber,
-          });
-          await user?.updateDisplayName(userModel.name);
-        } on FirebaseException catch (e) {
-          authException = true;
-          await user?.delete();
-          _exceptionStatus = ExceptionHandler.handleException(e);
-        }
+        await editUserProfile(userCred, userModel);
       });
-      _authStatus = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      _authStatus = AuthExceptionHandler.handleAuthException(e);
+      throw _generateAuthError(e);
+    } on FirebaseException catch (e) {
+      throw _generateError(e);
     }
-    return authException ? _exceptionStatus! : _authStatus!;
+  }
+
+  Future<void> editUserProfile(
+      UserCredential userCred, UserModel userModel) async {
+    final user = userCred.user;
+    final uid = user?.uid;
+    final ref = db.doc(FireStorePath.userProfile(uid as String));
+
+    try {
+      await ref.set({
+        'name': userModel.name,
+        'phoneNumber': userModel.phoneNumber,
+      });
+      await user?.updateDisplayName(userModel.name);
+    } catch (_) {
+      await user?.delete();
+      rethrow;
+    }
   }
 
   //Login to existing account
-  Future<AuthStatus> login({
+  Future<void> login({
     required String email,
     required String password,
   }) async {
     try {
       await firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      _authStatus = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      _authStatus = AuthExceptionHandler.handleAuthException(e);
+      throw _generateAuthError(e);
+    } on FirebaseException catch (e) {
+      throw _generateError(e);
     }
-    return _authStatus!;
   }
 
   //Reset password
-  Future<AuthStatus> resetPassword({required String email}) async {
+  Future<void> resetPassword({required String email}) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
-      _authStatus = AuthStatus.successful;
     } on FirebaseAuthException catch (e) {
-      _authStatus = AuthExceptionHandler.handleAuthException(e);
+      throw _generateAuthError(e);
+    } on FirebaseException catch (e) {
+      throw _generateError(e);
     }
-    return _authStatus!;
   }
 
   //Logout

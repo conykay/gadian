@@ -13,7 +13,6 @@ import '../../../models/user_model.dart';
 import '../../../services/error_handler.dart';
 
 final showPasswordSignUp = StateProvider<bool>((ref) => false);
-final loadingSignUp = StateProvider<bool>((ref) => false);
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({Key? key, required this.pageController}) : super(key: key);
@@ -26,8 +25,6 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   Map userdata = {};
   UserModel? userModel;
-  AuthStatus? _authStatus;
-  ExceptionStatus? _exceptionStatus;
   void _toggle() {
     ref.watch(showPasswordSignUp.notifier).update((state) => state = !state);
   }
@@ -50,7 +47,17 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     var scaffold = ScaffoldMessenger.of(context);
-    return ref.watch(loadingSignUp)
+    ref.listen<AsyncValue<bool>>(
+      authenticationViewModelProvider,
+      (_, state) => state.whenOrNull(error: (e, stackTrace) {
+        _showBanner(scaffold, e.toString());
+      }),
+    );
+
+    final signUpState = ref.watch(authenticationViewModelProvider);
+    final isLoading = signUpState is AsyncLoading<bool>;
+
+    return isLoading
         ? const Center(
             child: LoadingIndicator(
               indicatorType: Indicator.ballScaleMultiple,
@@ -203,30 +210,15 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
   // sign up logic
   Future<void> _handleSignup(ScaffoldMessengerState scaffold) async {
-    final loadingNotifier = ref.watch(loadingSignUp.notifier);
     if (_formKey.currentState!.validate()) {
-      loadingNotifier.update((state) => !state);
-
       var data = jsonEncode(userdata);
       UserModel userinfo = UserModel.fromJson(jsonDecode(data));
       if (kDebugMode) {
         print(userinfo);
       }
       await ref
-          .watch(authenticationViewModelProvider.notifier)
-          .createAccount(userinfo)
-          .then((value) => value.runtimeType == AuthStatus
-              ? _authStatus = value
-              : _exceptionStatus = value);
-      if (_authStatus != AuthStatus.successful) {
-        loadingNotifier.update((state) => !state);
-        String error;
-        _exceptionStatus != null
-            ? error = ExceptionHandler.generateErrorMessage(_exceptionStatus)
-            : error = AuthExceptionHandler.generateErrorMessage(_authStatus);
-
-        _showBanner(scaffold, error);
-      }
+          .read(authenticationViewModelProvider.notifier)
+          .createAccount(userinfo);
     }
   }
 
