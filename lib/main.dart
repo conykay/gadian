@@ -2,6 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart'
+    show SharedPreferences;
+
 import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/firebase_options.dart';
 import 'package:gadian/project_providers.dart';
@@ -10,8 +15,6 @@ import 'package:gadian/screens/main_screen.dart';
 import 'package:gadian/screens/onboarding/onboarding_screen.dart';
 import 'package:gadian/screens/onboarding/onboarding_view_model.dart';
 import 'package:gadian/services/shared_prefrences.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/internet_info.dart';
 
@@ -56,118 +59,127 @@ class _MyAppState extends ConsumerState<MyApp> {
     });
 
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          textTheme: GoogleFonts.muktaTextTheme(),
-          colorSchemeSeed: Colors.red,
-          brightness: Brightness.light,
-          inputDecorationTheme: const InputDecorationTheme(
-            isDense: true,
-            filled: true,
-            floatingLabelStyle: TextStyle(
-              backgroundColor: Colors.white54,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(50)),
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        textTheme: GoogleFonts.muktaTextTheme(),
+        colorSchemeSeed: Colors.red,
+        brightness: Brightness.light,
+        inputDecorationTheme: const InputDecorationTheme(
+          isDense: true,
+          filled: true,
+          floatingLabelStyle: TextStyle(
+            backgroundColor: Colors.white54,
           ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              textStyle: const TextStyle(
-                fontSize: 18,
-              ),
-            ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(50)),
           ),
-          filledButtonTheme: FilledButtonThemeData(
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-              textStyle: const TextStyle(fontSize: 18.0),
-            ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
           ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 50,
-                vertical: 10,
-              ),
-            ),
-          ),
-          iconTheme: const IconThemeData(color: Colors.redAccent),
         ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          textTheme: GoogleFonts.muktaTextTheme().copyWith(
-            displayLarge: GoogleFonts.mukta(color: Colors.white70),
-            displayMedium: GoogleFonts.mukta(color: Colors.white70),
-            displaySmall: GoogleFonts.mukta(color: Colors.white70),
-            headlineLarge: GoogleFonts.mukta(color: Colors.white70),
-            headlineMedium: GoogleFonts.mukta(color: Colors.white70),
-            headlineSmall: GoogleFonts.mukta(color: Colors.white70),
-            titleLarge: GoogleFonts.mukta(color: Colors.white70),
-            titleMedium: GoogleFonts.mukta(color: Colors.white70),
-            titleSmall: GoogleFonts.mukta(color: Colors.white70),
-            bodyLarge: GoogleFonts.mukta(color: Colors.white70),
-            bodyMedium: GoogleFonts.mukta(color: Colors.white70),
-            labelLarge: GoogleFonts.mukta(color: Colors.white70),
-            bodySmall: GoogleFonts.mukta(color: Colors.white70),
-            labelSmall: GoogleFonts.mukta(color: Colors.white70),
-          ),
-          colorSchemeSeed: Colors.red,
-          brightness: Brightness.dark,
-          inputDecorationTheme: const InputDecorationTheme(
-            isDense: true,
-            filled: true,
-            contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(50)),
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(
+              fontSize: 18,
             ),
           ),
-          textButtonTheme: TextButtonThemeData(
-            style: TextButton.styleFrom(
-              textStyle: const TextStyle(
-                fontSize: 18,
-              ),
-            ),
-          ),
-          filledButtonTheme: FilledButtonThemeData(
-            style: FilledButton.styleFrom(
-              minimumSize: const Size.fromHeight(60),
-              textStyle: const TextStyle(fontSize: 18.0),
-            ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(50),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 50,
-                vertical: 10,
-              ),
-            ),
-          ),
-          iconTheme: const IconThemeData(color: Colors.white70),
         ),
-        themeMode: ThemeMode.system,
-        scaffoldMessengerKey: scaffoldKey,
-        home: authStateChange.when(
-            data: (user) => _authentication(context, user, isNewUser),
-            error: (_, __) => const Scaffold(
-                body: Center(child: Text('Something went wrong'))),
-            loading: () => const Scaffold(
-                    body: Center(
-                  child: CircularProgressIndicator(),
-                ))));
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            textStyle: const TextStyle(fontSize: 18.0),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 50,
+              vertical: 10,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.redAccent),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        textTheme: GoogleFonts.muktaTextTheme().copyWith(
+          displayLarge: GoogleFonts.mukta(color: Colors.white70),
+          displayMedium: GoogleFonts.mukta(color: Colors.white70),
+          displaySmall: GoogleFonts.mukta(color: Colors.white70),
+          headlineLarge: GoogleFonts.mukta(color: Colors.white70),
+          headlineMedium: GoogleFonts.mukta(color: Colors.white70),
+          headlineSmall: GoogleFonts.mukta(color: Colors.white70),
+          titleLarge: GoogleFonts.mukta(color: Colors.white70),
+          titleMedium: GoogleFonts.mukta(color: Colors.white70),
+          titleSmall: GoogleFonts.mukta(color: Colors.white70),
+          bodyLarge: GoogleFonts.mukta(color: Colors.white70),
+          bodyMedium: GoogleFonts.mukta(color: Colors.white70),
+          labelLarge: GoogleFonts.mukta(color: Colors.white70),
+          bodySmall: GoogleFonts.mukta(color: Colors.white70),
+          labelSmall: GoogleFonts.mukta(color: Colors.white70),
+        ),
+        colorSchemeSeed: Colors.red,
+        brightness: Brightness.dark,
+        inputDecorationTheme: const InputDecorationTheme(
+          isDense: true,
+          filled: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(50)),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(
+              fontSize: 18,
+            ),
+          ),
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            minimumSize: const Size.fromHeight(60),
+            textStyle: const TextStyle(fontSize: 18.0),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size.fromHeight(50),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 50,
+              vertical: 10,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white70),
+      ),
+      themeMode: ThemeMode.system,
+      scaffoldMessengerKey: scaffoldKey,
+      home: authStateChange.when(
+        data: (user) => _authentication(context, user, isNewUser),
+        error: (_, __) =>
+            const Scaffold(body: Center(child: Text('Something went wrong'))),
+        loading: () => Scaffold(
+          body: Center(
+            child: LoadingIndicator(
+              indicatorType: Indicator.ballScaleMultiple,
+              colors: [
+                Colors.red,
+                Colors.lightBlueAccent,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _showInternetStatusBanner(Object? next) {

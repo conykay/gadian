@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+
 import 'package:gadian/components/infoMaterialBanner.dart';
 import 'package:gadian/components/registrationPageTitle.dart';
 import 'package:gadian/constants.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
-import 'package:gadian/services/error_handler.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 
 final showPasswordLogin = StateProvider<bool>((ref) => false);
 

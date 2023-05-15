@@ -1,10 +1,8 @@
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/models/contact_model.dart';
 import 'package:gadian/screens/Contacts/contacts_view_model.dart';
 
-import '../../../constants.dart';
 
 class CreateContactsGroup extends ConsumerStatefulWidget {
   const CreateContactsGroup({

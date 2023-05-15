@@ -15,7 +15,7 @@ class _ContactsListState extends ConsumerState<ContactsList> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Column(),
+        const Column(),
         CustomFloatingActionButton(
           buttonColor: const Color(0xff11468f),
           icon: Icons.add,

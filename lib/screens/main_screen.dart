@@ -49,9 +49,9 @@ class MainScreen extends ConsumerWidget {
     ];
 
     var buildBody = <Widget>[
-      AlertMainPage(),
+      const AlertMainPage(),
       ContactsMainPage(navigatorKey: _contactsKey),
-      ProfileScreen()
+      const ProfileScreen()
     ];
 
     void showSnackBar() {

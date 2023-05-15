@@ -1,9 +1,5 @@
-import 'dart:ffi';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/models/user_model.dart';
-import 'package:gadian/services/error_handler.dart';
 import 'package:gadian/services/firebase/firebase_registration.dart';
 
 final authenticationViewModelProvider =

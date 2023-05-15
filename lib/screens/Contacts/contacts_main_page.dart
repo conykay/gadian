@@ -6,7 +6,7 @@ import 'package:gadian/screens/Contacts/pages/create_contact_group_page.dart';
 class ContactsMainPage extends ConsumerStatefulWidget {
   final GlobalKey<NavigatorState> navigatorKey;
 
-  ContactsMainPage({
+  const ContactsMainPage({
     Key? key,
     required this.navigatorKey,
   }) : super(key: key);

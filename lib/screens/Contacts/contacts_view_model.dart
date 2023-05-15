@@ -1,7 +1,5 @@
 //TODO:implement viewmodel class and methods
 
-import 'package:contacts_service/contacts_service.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/services/contacts/contacts_service.dart';
 

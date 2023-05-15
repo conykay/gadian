@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/services/error_handler.dart';
 import 'package:gadian/services/firebase/firestore_paths.dart';
@@ -13,27 +14,27 @@ final userProfileProvider = Provider<UserProfile>((_) => UserProfile());
 class UserProfile {
   final User? _user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  ExceptionStatus? _status;
+  late UserModel userModel;
 
-  Future<dynamic> getUserInfo() async {
-    final currentProfileRef =
-        _db.doc(FireStorePath.userProfile(_user?.uid as String));
-    UserModel userModel;
+  Future<UserModel> getUserInfo() async {
+    final currentProfileRef = _db.doc(
+      FireStorePath.userProfile(_user?.uid as String),
+    );
     var userdata = {
       'email': _user?.email,
     };
     try {
       DocumentSnapshot snapshot = await currentProfileRef.get();
-      Map info = snapshot.data() as Map<String, dynamic>;
+      var info = snapshot.data() as Map<String, dynamic>;
       userdata = {...userdata, ...info};
       var data = jsonEncode(userdata);
       userModel = UserModel.fromJson(jsonDecode(data));
-      _status = ExceptionStatus.successful;
+      debugPrint('This was run.');
       return userModel;
     } on FirebaseException catch (e) {
-      _status = ExceptionHandler.handleException(e);
+      throw ExceptionHandler.generateErrorMessage(
+          ExceptionHandler.handleException(e));
     }
-    return _status;
   }
 
   // Future<AuthStatus> sendPasswordResetEmail() async {

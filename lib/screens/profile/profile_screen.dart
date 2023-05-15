@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/components/infoMaterialBanner.dart';
-import 'package:gadian/constants.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
-import 'package:gadian/screens/profile/profile_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
+import 'package:gadian/services/firebase/firebase_user_profile.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 
-final loadingProfile = StateProvider((ref) => false);
 final resetLoading = StateProvider((ref) => false);
+
+final userDataProvider = FutureProvider.autoDispose<UserModel>(
+    (ref) => ref.read(userProfileProvider).getUserInfo());
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -30,68 +32,59 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-  
     //? is it possible to use riverpods future notifier ?
-    
-    return FutureBuilder(
-        future: _userInfoFuture(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.connectionState == ConnectionState.done &&
-              snapshot.hasData) {
-            if (snapshot.data.runtimeType == UserModel) {
-              UserModel? userData = snapshot.data as UserModel?;
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildUserImage(image: userData?.imageUrl),
-                      _buildUserInfoSection(user: userData),
-                      Divider(
-                        thickness: 4,
-                        color: Colors.grey.withOpacity(0.1),
-                      ),
-                      _buildActionButtons()
-                    ],
-                  ),
+    final userModelProvider = ref.watch(userDataProvider);
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        return await ref.refresh(userDataProvider);
+      },
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: userModelProvider.when(
+          data: (userData) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                _buildUserImage(image: userData.imageUrl),
+                _buildUserInfoSection(user: userData),
+                Divider(
+                  thickness: 4,
+                  color: Colors.grey.withOpacity(0.1),
                 ),
-              );
-            }
-            return Center(
-              child: Column(children: [
-                const Icon(
-                  Icons.error,
-                  size: 30,
-                ),
-                Text(
-                  ExceptionHandler.generateErrorMessage(snapshot.data),
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ]),
-            );
-          } else {
-            return Center(
-              child: Column(children: [
-                const Icon(
-                  Icons.error,
-                  size: 30,
-                ),
-                Text(
-                  snapshot.error.toString(),
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ]),
-            );
-          }
-        });
+                _buildActionButtons()
+              ],
+            ),
+          ),
+          error: (e, stackTrace) => _errorWidget(e),
+          loading: () => const Center(
+            child: LoadingIndicator(
+              indicatorType: Indicator.ballScaleMultiple,
+              colors: [
+                Colors.red,
+                Colors.lightBlueAccent,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  Future<dynamic> _userInfoFuture() =>
-      ref.watch(userProfileViewModelProvider).getUserProfile();
+  Widget _errorWidget(e) {
+    return Center(
+      child: Column(children: [
+        const Icon(
+          Icons.error,
+          size: 30,
+        ),
+        Text(
+          e.toString(),
+          style: const TextStyle(color: Colors.red),
+        ),
+      ]),
+    );
+  }
 
   Widget _buildActionButtons() {
     return Column(
@@ -117,26 +110,20 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           width: 200,
           child: ElevatedButton(
             onPressed: () {
-              ref.watch(loadingProfile.notifier).update((state) => !state);
-              ref
-                  .watch(authenticationViewModelProvider.notifier)
-                  .logOut()
-                  .then((value) {
-                ref.watch(loadingProfile.notifier).update((state) => !state);
-              });
+              ref.read(authenticationViewModelProvider.notifier).logOut();
             },
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
               ),
             ),
-            child: ref.watch(loadingProfile)
-                ? CircularProgressIndicator(
-                    color: Colors.white.withOpacity(0.5))
-                : const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [Text('Logout'), Icon(Icons.logout)],
-                  ),
+            child:
+                ref.watch(authenticationViewModelProvider) is AsyncLoading<bool>
+                    ? const CircularProgressIndicator()
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [Text('Logout'), Icon(Icons.logout)],
+                      ),
           ),
         )
       ],
@@ -224,6 +211,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildUserImage({String? image}) {
+    String src =
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9ZNYnEdpW6Io--tnEw80mAgRGLOn2oNYNFQ&usqp=CAU';
     return Center(
       child: Stack(
         alignment: Alignment.bottomRight,
