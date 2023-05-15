@@ -2,13 +2,15 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/services/error_handler.dart';
 import 'package:gadian/services/firebase/firestore_paths.dart';
 
 import '../../models/user_model.dart';
 
+final userProfileProvider = Provider<UserProfile>((_) => UserProfile());
+
 class UserProfile {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final User? _user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   ExceptionStatus? _status;

@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/services/firebase/firebase_user_profile.dart';
 
 final userProfileViewModelProvider = Provider((ref) {
-  UserProfile userProfile = UserProfile();
+  var userProfile = ref.read(userProfileProvider);
   return UserProfileViewModel(userProfile);
 });
 

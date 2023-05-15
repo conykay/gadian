@@ -13,7 +13,6 @@ import 'package:gadian/services/shared_prefrences.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'constants.dart';
 import 'models/internet_info.dart';
 
 Future<void> main() async {

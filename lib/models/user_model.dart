@@ -15,8 +15,14 @@ class UserModel {
   final String password;
   @JsonKey(defaultValue: [])
   final List<ContactModel> contacts;
-  UserModel(this.name, this.password, this.email, this.phoneNumber,
-      this.contacts, this.imageUrl);
+  UserModel(
+    this.name,
+    this.password,
+    this.email,
+    this.phoneNumber,
+    this.contacts,
+    this.imageUrl,
+  );
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
