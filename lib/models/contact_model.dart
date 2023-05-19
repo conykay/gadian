@@ -4,22 +4,16 @@ part 'contact_model.g.dart';
 
 @JsonSerializable()
 class ContactModel {
-  final String id;
   final String name;
   final String phoneNumber;
   @JsonKey(defaultValue: false)
   bool selected;
 
   ContactModel(
-      {required this.id,
-      required this.name,
-      required this.phoneNumber,
-      required this.selected});
+      {required this.name, required this.phoneNumber, required this.selected});
 
-  ContactModel copyWith(
-      {String? id, String? name, String? phoneNumber, bool? selected}) {
+  ContactModel copyWith({String? name, String? phoneNumber, bool? selected}) {
     return ContactModel(
-      id: id ?? this.id,
       name: name ?? this.name,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       selected: selected ?? this.selected,

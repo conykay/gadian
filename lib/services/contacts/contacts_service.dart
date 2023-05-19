@@ -24,16 +24,13 @@ class RetrieveContactsService {
         retrievedContacts = contacts;
       }
       if (retrievedContacts.isNotEmpty) {
-        var index = 0;
         for (var contact in retrievedContacts) {
           Item item = contact.phones!.first;
           parsedContacts.add(ContactModel(
-            id: index.toString(),
             name: contact.displayName!,
             phoneNumber: item.value!,
             selected: false,
           ));
-          index++;
         }
       }
       return parsedContacts;

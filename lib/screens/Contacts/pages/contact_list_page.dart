@@ -20,10 +20,39 @@ class _ContactsListState extends ConsumerState<ContactsList> {
         CustomFloatingActionButton(
           icon: Icons.add,
           onPressed: () {
-            throw UnimplementedError('No function yet, just like you.');
+            customModalBottomSheet(context);
           },
         )
       ],
+    );
+  }
+
+  Future<dynamic> customModalBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      useSafeArea: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        builder: (_, scrollController) => Column(
+          children: [
+            Text(
+              'Select contacts to add.',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: scrollController,
+                itemCount: 50,
+                itemBuilder: (_, index) => ListTile(
+                  leading: Icon(Icons.person_2_outlined),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
