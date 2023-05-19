@@ -7,7 +7,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
 
-import 'package:gadian/components/infoMaterialBanner.dart';
+import 'package:gadian/components/info_material_banner.dart';
 import 'package:gadian/firebase_options.dart';
 import 'package:gadian/project_providers.dart';
 import 'package:gadian/screens/authentication/registration_screen.dart';

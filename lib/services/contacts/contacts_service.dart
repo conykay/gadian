@@ -15,26 +15,30 @@ class RetrieveContactsService {
   RetrieveContactsService(this.getPermissionService);
 
   Future<List<ContactModel>> getContactsFromDevice() async {
-    List<Contact> retrievedContacts = [];
+    late List<Contact> retrievedContacts;
     List<ContactModel> parsedContacts = [];
-    var status = await getPermissionService.getContactsPermission();
-    if (status == PermissionStatus.granted) {
-      var contacts = await ContactsService.getContacts(withThumbnails: false);
-      retrievedContacts = contacts;
-    }
-    if (retrievedContacts.isNotEmpty) {
-      var index = 0;
-      for (var contact in retrievedContacts) {
-        Item item = contact.phones!.first;
-        parsedContacts.add(ContactModel(
-          id: index.toString(),
-          name: contact.displayName!,
-          phoneNumber: item.value!,
-          selected: false,
-        ));
-        index++;
+    try {
+      var status = await getPermissionService.getContactsPermission();
+      if (status == PermissionStatus.granted) {
+        var contacts = await ContactsService.getContacts(withThumbnails: false);
+        retrievedContacts = contacts;
       }
+      if (retrievedContacts.isNotEmpty) {
+        var index = 0;
+        for (var contact in retrievedContacts) {
+          Item item = contact.phones!.first;
+          parsedContacts.add(ContactModel(
+            id: index.toString(),
+            name: contact.displayName!,
+            phoneNumber: item.value!,
+            selected: false,
+          ));
+          index++;
+        }
+      }
+      return parsedContacts;
+    } catch (e) {
+      rethrow;
     }
-    return parsedContacts;
   }
 }

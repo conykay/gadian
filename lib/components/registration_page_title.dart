@@ -1,4 +1,3 @@
-// Registration Page Title Widget
 import 'package:flutter/material.dart';
 
 Container kBuildPageTitle(

@@ -50,7 +50,7 @@ class MainScreen extends ConsumerWidget {
 
     var buildBody = <Widget>[
       const AlertMainPage(),
-      ContactsMainPage(navigatorKey: _contactsKey),
+      const ContactsMainPage(),
       const ProfileScreen()
     ];
 

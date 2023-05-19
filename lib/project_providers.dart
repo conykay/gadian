@@ -15,5 +15,5 @@ final cloudFireStoreProvider = Provider<FirebaseFirestore>((ref) {
 });
 
 //Internet connection status Provider.
-final internetChecker = StreamProvider<InternetConnectionStatus>(
+final internetChecker = StreamProvider.autoDispose<InternetConnectionStatus>(
     (ref) => InternetConnectionChecker().onStatusChange);

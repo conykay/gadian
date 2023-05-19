@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gadian/components/custom_floating_action_button.dart';
 
 class ContactsList extends ConsumerStatefulWidget {
   const ContactsList({
@@ -17,37 +18,12 @@ class _ContactsListState extends ConsumerState<ContactsList> {
       children: [
         const Column(),
         CustomFloatingActionButton(
-          buttonColor: const Color(0xff11468f),
           icon: Icons.add,
-          onPressed: () => Navigator.pushNamed(context, '/createContactGroup'),
+          onPressed: () {
+            throw UnimplementedError('No function yet, just like you.');
+          },
         )
       ],
-    );
-  }
-}
-
-class CustomFloatingActionButton extends StatelessWidget {
-  const CustomFloatingActionButton({
-    required this.buttonColor,
-    required this.icon,
-    required this.onPressed,
-    Key? key,
-  }) : super(key: key);
-
-  final Function() onPressed;
-  final Color buttonColor;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-      alignment: Alignment.bottomRight,
-      child: FloatingActionButton(
-        backgroundColor: buttonColor,
-        onPressed: onPressed,
-        child: Icon(icon),
-      ),
     );
   }
 }

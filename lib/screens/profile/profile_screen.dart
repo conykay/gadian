@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gadian/components/infoMaterialBanner.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+
+import 'package:gadian/components/info_material_banner.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/screens/authentication/authentication_view_model.dart';
 import 'package:gadian/services/error_handler.dart';
 import 'package:gadian/services/firebase/firebase_user_profile.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 
 final resetLoading = StateProvider((ref) => false);
 
@@ -97,11 +98,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: TextButton(
               onPressed: () =>
                   throw UnimplementedError('Incomplete Implementation'),
-              // Provider.of<ProfileProvider>(context, listen: false)
-              //     .getUserInfo(),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text('Invite Friend'), Icon(Icons.person_add_alt)],
+                children: [
+                  Text('Invite Friend'),
+                  Icon(Icons.person_add_alt),
+                ],
               ),
             ),
           ),
@@ -122,7 +124,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     ? const CircularProgressIndicator()
                     : const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [Text('Logout'), Icon(Icons.logout)],
+                        children: [
+                          Text('Logout'),
+                          Icon(Icons.logout),
+                        ],
                       ),
           ),
         )
