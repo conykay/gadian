@@ -45,7 +45,7 @@ class _ContactsListState extends ConsumerState<ContactsList> {
               child: ListView.builder(
                 controller: scrollController,
                 itemCount: 50,
-                itemBuilder: (_, index) => ListTile(
+                itemBuilder: (_, index) => const ListTile(
                   leading: Icon(Icons.person_2_outlined),
                 ),
               ),

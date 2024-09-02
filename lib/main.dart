@@ -167,7 +167,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         data: (user) => _authentication(context, user, isNewUser),
         error: (_, __) =>
             const Scaffold(body: Center(child: Text('Something went wrong'))),
-        loading: () => Scaffold(
+        loading: () => const Scaffold(
           body: Center(
             child: LoadingIndicator(
               indicatorType: Indicator.ballScaleMultiple,
