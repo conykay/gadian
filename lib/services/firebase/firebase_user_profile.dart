@@ -1,40 +1,33 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:gadian/services/error_handler.dart';
+import 'package:gadian/project_providers.dart';
 import 'package:gadian/services/firebase/firestore_paths.dart';
 
 import '../../models/user_model.dart';
 
-final userProfileProvider = Provider<UserProfile>((_) => UserProfile());
+
+final userProfileProvider = Provider<UserProfile>((ref) {
+  final authstate = ref.watch(authStateChangesProvider);
+  return UserProfile(authstate.value);
+});
 
 class UserProfile {
-  final User? _user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   late UserModel userModel;
+  final User? user;
 
-  Future<UserModel> getUserInfo() async {
-    final currentProfileRef = _db.doc(
-      FireStorePath.userProfile(_user?.uid as String),
-    );
-    var userdata = {
-      'email': _user?.email,
-    };
-    try {
-      DocumentSnapshot snapshot = await currentProfileRef.get();
-      var info = snapshot.data() as Map<String, dynamic>;
-      userdata = {...userdata, ...info};
-      var data = jsonEncode(userdata);
-      userModel = UserModel.fromJson(jsonDecode(data));
-      debugPrint('This was run.');
-      return userModel;
-    } on FirebaseException catch (e) {
-      throw ExceptionHandler.generateErrorMessage(
-          ExceptionHandler.handleException(e));
-    }
+  UserProfile(this.user);
+
+  Stream<UserModel> getUserInfo() async* {
+    final currentProfileRef = _db.doc(FireStorePath.userProfile(user!.uid));
+    Stream<DocumentSnapshot> snapshot = currentProfileRef.snapshots();
+    final usermodel = snapshot.map((snpsht){
+      return UserModel.fromJson(snpsht.data() as Map<String, dynamic>);
+    });
+    yield* usermodel;
   }
 
   // Future<AuthStatus> sendPasswordResetEmail() async {

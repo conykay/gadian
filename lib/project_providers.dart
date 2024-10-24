@@ -6,7 +6,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 final firebaseAuthProvider =
     Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 
-final authStateChangesProvider = StreamProvider.autoDispose<User?>(
+final authStateChangesProvider = StreamProvider<User?>(
     (ref) => ref.watch(firebaseAuthProvider).authStateChanges());
 
 //Make the instance dependent on the auth state changes. whether it helps or not is inconclusive.

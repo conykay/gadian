@@ -10,7 +10,7 @@ import 'package:gadian/services/firebase/firebase_user_profile.dart';
 
 final resetLoading = StateProvider((ref) => false);
 
-final userDataProvider = FutureProvider.autoDispose<UserModel>(
+final userDataProvider = StreamProvider<UserModel>(
     (ref) => ref.read(userProfileProvider).getUserInfo());
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -36,36 +36,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     //? is it possible to use riverpods future notifier ?
     final userModelProvider = ref.watch(userDataProvider);
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        return await ref.refresh(userDataProvider);
-      },
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: userModelProvider.when(
-          data: (userData) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                _buildUserImage(image: userData.imageUrl),
-                _buildUserInfoSection(user: userData),
-                Divider(
-                  thickness: 4,
-                  color: Colors.grey.withOpacity(0.1),
-                ),
-                _buildActionButtons()
-              ],
-            ),
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: userModelProvider.when(
+        data: (userData) => Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              _buildUserImage(image: userData.imageUrl),
+              _buildUserInfoSection(user: userData),
+              Divider(
+                thickness: 4,
+                color: Colors.grey.withOpacity(0.1),
+              ),
+              _buildActionButtons()
+            ],
           ),
-          error: (e, stackTrace) => _errorWidget(e),
-          loading: () => const Center(
-            child: LoadingIndicator(
-              indicatorType: Indicator.ballScaleMultiple,
-              colors: [
-                Colors.red,
-                Colors.lightBlueAccent,
-              ],
-            ),
+        ),
+        error: (e, stackTrace) => _errorWidget(e),
+        loading: () => const Center(
+          child: LoadingIndicator(
+            indicatorType: Indicator.ballScaleMultiple,
+            colors: [
+              Colors.red,
+              Colors.lightBlueAccent,
+            ],
           ),
         ),
       ),
@@ -141,9 +136,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _userInfo(label: 'Name', info: user!.name),
-          _userInfo(label: 'Email', info: user.email),
-          _userInfo(label: 'Phone number', info: user.phoneNumber),
+          _userInfo(label: 'Name', info: user!.name!),
+          _userInfo(label: 'Email', info: user.email!),
+          _userInfo(label: 'Phone number', info: user.phoneNumber!),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: TextButton(
@@ -159,7 +154,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 AuthStatus? status;
                 await ref
                     .watch(authenticationViewModelProvider.notifier)
-                    .resetPassword(email: user.email);
+                    .resetPassword(email: user.email!);
                 if (status == AuthStatus.successful) {
                   _toggleReset;
                   String message =

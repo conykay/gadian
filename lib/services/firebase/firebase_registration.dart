@@ -8,7 +8,7 @@ import 'package:gadian/services/firebase/firestore_paths.dart';
 
 import '../error_handler.dart';
 
-final authProvider = Provider((ref) {
+final authProvider = Provider<Authentication>((ref) {
   final firebaseAuth = ref.watch(firebaseAuthProvider);
   return Authentication(firebaseAuth: firebaseAuth);
 });
@@ -29,7 +29,7 @@ class Authentication {
     try {
       await firebaseAuth
           .createUserWithEmailAndPassword(
-              email: userModel.email, password: userModel.password)
+              email: userModel.email as String, password: userModel.password as String)
           .then((userCred) async {
         await editUserProfile(userCred, userModel);
       });
@@ -39,7 +39,7 @@ class Authentication {
       throw _generateError(e);
     }
   }
-
+//Edit user account
   Future<void> editUserProfile(
       UserCredential userCred, UserModel userModel) async {
     final user = userCred.user;

@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gadian/models/user_model.dart';
 import 'package:gadian/services/firebase/firebase_registration.dart';
 
+//todo: Check if change notifier is best suited for this case.
+
 final authenticationViewModelProvider =
     StateNotifierProvider<AuthenticationViewModel, AsyncValue<bool>>((ref) {
   final auth = ref.watch(authProvider);

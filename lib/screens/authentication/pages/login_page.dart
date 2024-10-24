@@ -20,7 +20,7 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   void _toggle() {
-    ref.watch(showPasswordLogin.notifier).update((state) => !state);
+    ref.read(showPasswordLogin.notifier).update((state) => !state);
   }
 
   var userdata = {};
@@ -45,7 +45,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
 
     final loginState = ref.watch(authenticationViewModelProvider);
-    final isLoading = loginState is AsyncLoading<bool>;
+    final isLoading = loginState.isLoading;
 
     return isLoading
         ? const Center(
